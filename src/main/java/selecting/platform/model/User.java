@@ -2,8 +2,12 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import selecting.platform.model.Enum.ProviderType;
+import selecting.platform.model.Enum.Role;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -32,12 +36,25 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-
-    public enum Role {
-        NORMAL, TUTOR, ADMIN
-    }
-
     private String profileImage;
+
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
+
+    @OneToMany(mappedBy = "user")
+    private Set<ServicePost> servicePosts = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<ChatRoom> chatRooms = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Reservation> reservations = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Review> reviews = new HashSet<>();
+
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;

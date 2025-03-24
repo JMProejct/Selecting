@@ -20,7 +20,7 @@ public class ChatRoom {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private ServicePost post;
+    private ServicePost servicePost;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)

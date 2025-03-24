@@ -31,7 +31,4 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public enum Status {
-        PENDING, CONFIRMED, CANCELLED
-    }
 }

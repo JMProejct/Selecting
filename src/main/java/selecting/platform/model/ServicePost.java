@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "servicepost")
@@ -40,4 +42,13 @@ public class ServicePost {
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
+
+    @OneToMany(mappedBy = "servicePost")
+    private Set<ChatRoom> chatRooms = new HashSet<>();
+
+    @OneToMany(mappedBy = "servicePost")
+    private Set<Review> reviews = new HashSet<>();
+
+    @OneToMany(mappedBy = "servicePost")
+    private Set<Reservation> reservations = new HashSet<>();
 }
