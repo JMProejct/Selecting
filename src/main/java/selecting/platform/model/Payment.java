@@ -4,6 +4,7 @@ package selecting.platform.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import selecting.platform.model.Enum.PaymentMethod;
 import selecting.platform.model.Enum.Status;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class Payment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime paymentDate;
 
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     private Status status;
 }

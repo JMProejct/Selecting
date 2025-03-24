@@ -2,6 +2,7 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import selecting.platform.model.Enum.Status;
 
 import java.time.LocalDateTime;
 
