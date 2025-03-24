@@ -22,8 +22,8 @@ public class ServicePost {
     private Integer postId;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id", nullable = false)
-    private User teacher;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "subcategory_id", nullable = false)

@@ -16,15 +16,15 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer review_id;
+    private Integer reviewId;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private ServicePost post;
+    private ServicePost servicePost;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private User student;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private Integer rating;
 

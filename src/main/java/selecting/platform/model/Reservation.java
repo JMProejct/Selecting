@@ -21,11 +21,11 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private ServicePost post;
+    private ServicePost servicePost;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private User student;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private LocalDateTime reservationDate;
 

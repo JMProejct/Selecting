@@ -20,6 +20,10 @@ public class Subcategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer subcategoryId;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     @Column
     @Enumerated(EnumType.STRING)
     private SubCategoryKind subCategoryKind;

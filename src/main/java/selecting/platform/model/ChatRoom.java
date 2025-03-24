@@ -23,8 +23,8 @@ public class ChatRoom {
     private ServicePost servicePost;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private User student;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
