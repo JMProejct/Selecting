@@ -23,38 +23,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
+    private String name;
     private String password;
+    private String profileImage;
+
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
-    private String profileImage;
-
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
-
-    @OneToMany(mappedBy = "user")
-    private Set<ServicePost> servicePosts = new HashSet<>();
-
-    @OneToMany(mappedBy = "user")
-    private Set<ChatRoom> chatRooms = new HashSet<>();
-
-    @OneToMany(mappedBy = "user")
-    private Set<Reservation> reservations = new HashSet<>();
-
-    @OneToMany(mappedBy = "user")
-    private Set<Review> reviews = new HashSet<>();
-
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;

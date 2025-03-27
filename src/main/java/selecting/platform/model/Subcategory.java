@@ -24,10 +24,7 @@ public class Subcategory {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column
     @Enumerated(EnumType.STRING)
     private SubCategoryKind subCategoryKind;
 
-    @OneToMany(mappedBy = "subcategory")
-    private Set<ServicePost> servicePosts = new HashSet<>();
 }

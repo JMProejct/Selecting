@@ -21,34 +21,25 @@ public class ServicePost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer postId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "subcategory_id", nullable = false)
     private Subcategory subcategory;
 
-    @Column(nullable = false)
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private BigDecimal price;
-
     private String location;
+
+    @Column(nullable = false)
+    private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
-
-    @OneToMany(mappedBy = "servicePost")
-    private Set<ChatRoom> chatRooms = new HashSet<>();
-
-    @OneToMany(mappedBy = "servicePost")
-    private Set<Review> reviews = new HashSet<>();
-
-    @OneToMany(mappedBy = "servicePost")
-    private Set<Reservation> reservations = new HashSet<>();
 }

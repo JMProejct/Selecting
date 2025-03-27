@@ -18,16 +18,16 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer paymentId;
 
+    private Integer amount;
+
+    private Integer paymentMethod; // TINYINT로 매핑
+
+    private Integer status; // TINYINT로 매핑
+
     @ManyToOne
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    private Integer amount;
-
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime paymentDate;
-
-    private PaymentMethod paymentMethod;
-
-    private Status status;
 }
