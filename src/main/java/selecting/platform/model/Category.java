@@ -2,8 +2,7 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
+import selecting.platform.model.Enum.SubCategoryKind;
 
 @Getter
 @Setter
@@ -18,6 +17,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer categoryId;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category_kind", length = 20)
+    private SubCategoryKind categoryKind;
 }

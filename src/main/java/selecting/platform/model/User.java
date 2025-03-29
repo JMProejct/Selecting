@@ -23,17 +23,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    private String username;
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false)
     private String password;
+
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private ProviderType providerType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private Role role;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

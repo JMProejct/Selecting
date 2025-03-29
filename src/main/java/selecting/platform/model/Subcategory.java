@@ -2,10 +2,6 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import selecting.platform.model.Enum.SubCategoryKind;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "subcategory")
@@ -24,7 +20,7 @@ public class Subcategory {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Enumerated(EnumType.STRING)
-    private SubCategoryKind subCategoryKind;
+    @Column(name = "subcategory_name")
+    private String subcategoryName;
 
 }
