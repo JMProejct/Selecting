@@ -1,5 +1,7 @@
 package selecting.platform.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,5 +19,5 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
             "   OR LOWER(sp.location) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(sp.subcategory.subcategoryName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(sp.user.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<ServicePostResponseDto> searchByKeyword(@Param("keyword") String keyword);
+    Page<ServicePostResponseDto> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }
