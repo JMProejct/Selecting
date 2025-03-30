@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 import selecting.platform.dto.ServicePostResponseDto;
 import selecting.platform.repository.ServicePostRepository;
 
-import java.util.List;
+import java.math.BigDecimal;
+
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class ServicePostService {
 
     private final ServicePostRepository servicePostRepository;
 
-    public Page<ServicePostResponseDto> searchPosts(String keyword, Pageable pageable) {
-        return servicePostRepository.searchByKeyword(keyword, pageable);
+    public Page<ServicePostResponseDto> searchPosts(String keyword, BigDecimal minPrice, BigDecimal maxPrice, String location, Pageable pageable) {
+        return servicePostRepository.searchWithFilters(keyword, minPrice, maxPrice, location, pageable);
     }
 }

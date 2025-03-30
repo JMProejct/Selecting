@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import selecting.platform.dto.ServicePostResponseDto;
 import selecting.platform.service.ServicePostService;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -22,8 +22,11 @@ public class ServicePostController {
     private final ServicePostService servicePostService;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<ServicePostResponseDto>> searchPosts(@RequestParam("q") String keyword,
+    public ResponseEntity<Page<ServicePostResponseDto>> searchPosts(@RequestParam(value = "q", required = false) String keyword,
+                                                                    @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+                                                                    @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
+                                                                    @RequestParam(value = "location", required = false) String location,
                                                                     @PageableDefault(size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(servicePostService.searchPosts(keyword, pageable));
+        return ResponseEntity.ok(servicePostService.searchPosts(keyword, minPrice, maxPrice, location, pageable));
     }
 }
