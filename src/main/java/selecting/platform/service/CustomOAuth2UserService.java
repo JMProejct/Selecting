@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
         }
         String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
-        User existData = userRepository.findByUsername(username);
+        User existData = userRepository.findByUsername(username).orElse(null);
 
         // 신규 회원인 경우
         if(existData == null) {
