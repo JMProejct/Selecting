@@ -17,16 +17,16 @@ public class GoogleResponseDto implements OAuth2Response{
 
     @Override
     public String getProviderId() {
-        return "sub";
+        return attribute.get("sub").toString();
     }
 
     @Override
     public String getEmail() {
-        return "email";
+        return attribute.get("email").toString();
     }
 
     @Override
     public String getName() {
-        return "name";
+        return attribute.get("name").toString();
     }
 }
