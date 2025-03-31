@@ -57,10 +57,11 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler)
                 );
 
-        //경로별 인가 작업
+        //경로별 인가 작업 (검색 API 허용)
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/login", "/index", "/join").permitAll()
+                        .requestMatchers("/api/posts/search").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
