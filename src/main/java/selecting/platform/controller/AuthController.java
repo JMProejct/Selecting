@@ -17,6 +17,7 @@ import selecting.platform.model.Enum.Role;
 import selecting.platform.model.User;
 import selecting.platform.service.UserService;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 @Controller
@@ -45,10 +46,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam("username") String username,
-                                   @RequestParam("password") String password,
-                                   HttpServletResponse response) {
+    public void login(@RequestParam("username") String username,
+                      @RequestParam("password") String password,
+                      HttpServletResponse response) throws IOException {
         try {
+            // 사용자 인증
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
@@ -59,9 +61,12 @@ public class AuthController {
             // JWT를 쿠키에 저장
             response.addCookie(createCookie("Authorization", token));
 
-            return ResponseEntity.ok("로그인 성공");
+            // 로그인 성공 후 리디렉션
+            response.sendRedirect("/main"); // 리디렉션 경로 설정
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
+            // 로그인 실패 시 상태 코드 전송 및 메시지 출력
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("로그인 실패");
         }
     }
 
