@@ -1,24 +1,31 @@
 package selecting.platform.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import selecting.platform.dto.*;
+import selecting.platform.model.Enum.ProviderType;
 import selecting.platform.model.Enum.Role;
 import selecting.platform.model.User;
 import selecting.platform.repository.UserRepository;
+
+import java.sql.Timestamp;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public CustomOAuth2UserService(UserRepository userRepository) {
+    public CustomOAuth2UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -32,9 +39,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2Response oAuth2Response = null;
         if(registrationId.equals("google")) {
             oAuth2Response = new GoogleResponseDto(oAuth2User.getAttributes());
+            registrationId = "GOOGLE";
         }
         else if(registrationId.equals("kakao")) {
             oAuth2Response = new KakaoResponseDto(oAuth2User.getAttributes());
+            registrationId = "KAKAO";
         }
         else {
             return null;
@@ -46,9 +55,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if(existData == null) {
             User user = new User();
             user.setUsername(username);
-            user.setEmail(oAuth2Response.getProvider());
-            user.setName(oAuth2Response.getProvider());
+            user.setEmail(oAuth2Response.getEmail());
+            user.setName(oAuth2Response.getName());
             user.setRole(Role.NORMAL);
+            user.setProviderType(ProviderType.valueOf(registrationId));
+            user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+            // 랜덤 비밀번호 생성
+            String randomPassword = UUID.randomUUID().toString();
+            user.setPassword(bCryptPasswordEncoder.encode(randomPassword)); // 비밀번호 암호화 저장
 
             userRepository.save(user);
 
