@@ -39,6 +39,11 @@ public class AuthController {
         return "join";
     }
 
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam("username") String username,
                                    @RequestParam("password") String password,
