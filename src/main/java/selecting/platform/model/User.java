@@ -45,6 +45,9 @@ public class User {
     @Column(nullable = false, length = 20)
     private Role role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private TeacherProfile teacherProfile;
+
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
 }
