@@ -18,4 +18,7 @@ public class ServicePostResponseDto {
     private String subcategoryName;
     private String teacherName;
     private BigDecimal price;
+
+    private Integer careerYears;
+    private String education;
 }

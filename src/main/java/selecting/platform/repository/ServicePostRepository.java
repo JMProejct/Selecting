@@ -12,10 +12,11 @@ import java.math.BigDecimal;
 public interface ServicePostRepository extends JpaRepository<ServicePost, Integer> {
     // 게시글 제목 / 수업 위치 / 과목명 / 교사이름 검색 쿼리 (가격, 범위 , 지역, 교사 경력, 학력 필터링 기능 추가)
     @Query("SELECT new selecting.platform.dto.ServicePostResponseDto(" +
-            "sp.postId, sp.title, sp.location, sp.subcategory.subcategoryName, u.name, sp.price) " +
+            "sp.postId, sp.title, sp.location, sp.subcategory.subcategoryName, u.name, sp.price, " +
+            "tp.careerYears, tp.education) " +
             "FROM ServicePost sp " +
             "JOIN sp.user u " +
-            "JOIN u.teacherProfile tp " + // ✅ 추가
+            "JOIN u.teacherProfile tp " +
             "WHERE (:keyword IS NULL OR " +
             "       LOWER(sp.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "    OR LOWER(sp.subcategory.subcategoryName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
@@ -33,4 +34,5 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
             @Param("minCareer") Integer minCareer,
             @Param("education") String education,
             Pageable pageable);
+
 }
