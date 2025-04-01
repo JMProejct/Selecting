@@ -16,7 +16,7 @@ public class ServicePostService {
 
     private final ServicePostRepository servicePostRepository;
 
-    public Page<ServicePostResponseDto> searchPosts(String keyword, BigDecimal minPrice, BigDecimal maxPrice, String location, Pageable pageable) {
-        return servicePostRepository.searchWithFilters(keyword, minPrice, maxPrice, location, pageable);
+    public Page<ServicePostResponseDto> searchPosts(String keyword, BigDecimal minPrice, BigDecimal maxPrice, String location, Integer minCareer, String education, Pageable pageable) {
+        return servicePostRepository.searchWithFilters(keyword, minPrice, maxPrice, location, minCareer, education, pageable);
     }
 }

@@ -26,7 +26,9 @@ public class ServicePostController {
                                                                     @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
                                                                     @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
                                                                     @RequestParam(value = "location", required = false) String location,
+                                                                    @RequestParam(value = "minCareer", required = false) Integer minCareer,
+                                                                    @RequestParam(value = "education", required = false) String education,
                                                                     @PageableDefault(size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(servicePostService.searchPosts(keyword, minPrice, maxPrice, location, pageable));
+        return ResponseEntity.ok(servicePostService.searchPosts(keyword, minPrice, maxPrice, location, minCareer, education, pageable));
     }
 }
