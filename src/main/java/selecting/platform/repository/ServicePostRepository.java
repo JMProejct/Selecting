@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import selecting.platform.dto.ServicePostResponseDto;
 import selecting.platform.model.ServicePost;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface ServicePostRepository extends JpaRepository<ServicePost, Integer> {
     // 게시글 제목 / 수업 위치 / 과목명 / 교사이름 검색 쿼리 (가격, 범위 , 지역, 교사 경력, 학력 필터링 기능 추가)
@@ -34,5 +35,14 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
             @Param("minCareer") Integer minCareer,
             @Param("education") String education,
             Pageable pageable);
+
+
+    // 교사 상세정보 검색 API
+    @Query("SELECT sp FROM ServicePost sp " +
+            "JOIN FETCH sp.user u " +
+            "JOIN FETCH sp.subcategory s " +
+            "JOIN FETCH u.teacherProfile tp " +
+            "WHERE sp.postId = :postId")
+    Optional<ServicePost> findDetailById(@Param("postId") Integer postId);
 
 }

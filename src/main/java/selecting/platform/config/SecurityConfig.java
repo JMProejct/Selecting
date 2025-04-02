@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/login", "/index", "/join").permitAll()
                         .requestMatchers("/api/posts/search").permitAll()
+                        .requestMatchers("/api/posts/{postId}").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
