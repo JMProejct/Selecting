@@ -46,11 +46,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestParam("username") String username,
+    public void login(@RequestParam("usernameOrEmail") String usernameOrEmail,
                       @RequestParam("password") String password,
                       HttpServletResponse response) throws IOException {
         try {
-            // 사용자 인증
+            User user = userService.findByUsernameOrEmail(usernameOrEmail);
+
+            if (user == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("존재하지 않는 사용자입니다.");
+                return;
+            }
+
+            String username = user.getUsername();
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
