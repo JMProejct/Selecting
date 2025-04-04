@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface ServicePostRepository extends JpaRepository<ServicePost, Integer> {
     // 게시글 제목 / 수업 위치 / 과목명 / 교사이름 검색 쿼리 (가격, 범위 , 지역, 교사 경력, 학력 필터링 기능 추가)
-    @Query("SELECT new selecting.platform.dto.ServicePostResponseDto(" +
+    @Query("SELECT new selecting.platform.dto.servicepost.ServicePostResponseDto(" +
             "sp.postId, sp.title, sp.location, sp.subcategory.subcategoryName, u.name, sp.price, " +
             "tp.careerYears, tp.education) " +
             "FROM ServicePost sp " +
