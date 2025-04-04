@@ -7,8 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import selecting.platform.dto.ServicePostDetailDto;
-import selecting.platform.dto.ServicePostResponseDto;
+import selecting.platform.dto.servicepost.ServicePostDetailDto;
+import selecting.platform.dto.servicepost.ServicePostResponseDto;
 import selecting.platform.service.ServicePostService;
 
 import java.math.BigDecimal;

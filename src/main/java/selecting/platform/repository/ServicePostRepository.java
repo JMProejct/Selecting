@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import selecting.platform.dto.ServicePostResponseDto;
+import selecting.platform.dto.servicepost.ServicePostResponseDto;
 import selecting.platform.model.ServicePost;
 import java.math.BigDecimal;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package selecting.platform.dto;
+package selecting.platform.dto.servicepost;
 
 
 import lombok.*;
