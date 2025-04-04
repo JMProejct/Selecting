@@ -18,6 +18,18 @@ public class CustomUserDetails implements UserDetails {
         this.user = user;
     }
 
+    // 🔐 로그인에 사용되는 ID
+    @Override
+    public String getUsername() {
+        return user.getEmail(); // email을 ID로 사용할 경우
+    }
+
+    // 🔐 암호화된 비밀번호
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
     // 🔒 사용자 권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
