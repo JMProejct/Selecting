@@ -60,7 +60,8 @@ public class SecurityConfig {
         //경로별 인가 작업 (검색 API 허용)
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login", "/index", "/join","/favicon.ico").permitAll()
+                        .requestMatchers("/", "/login", "/index", "/join").permitAll()
+                        .requestMatchers("/favicon.ico","/static/**","/js/**", "/css/**", "/images/**").permitAll()
                         .requestMatchers("/api/posts/search").permitAll()
                         .requestMatchers("/api/posts/{postId}").permitAll()
                         .requestMatchers("/api/reservations").permitAll()

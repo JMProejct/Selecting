@@ -6,12 +6,13 @@
 </head>
 <body>
 <h2>회원가입</h2>
-<form action="/join" method="post">
-    <label>아이디: <input type="text" name="username" required></label><br/>
-    <label>비밀번호: <input type="password" name="password" required></label><br/>
-    <label>이메일: <input type="email" name="email" required></label><br/>
+<form action="/join" method="post" onsubmit="validateForm(event)">
+    <label>아이디: <input type="text" name="username" id="username" required placeholder="6~12글자 입력"></label><br/>
+    <label>비밀번호: <input type="password" name="password" id="password" required placeholder="6~12글자 입력"></label><br/>
+    <label>이메일: <input type="email" name="email" id="email" required></label><br/>
     <label>이름: <input type="text" name="name" required></label><br/>
     <button type="submit">가입하기</button>
+    <script src="/js/joinValidate.js"></script>
 </form>
 </body>
 </html>
