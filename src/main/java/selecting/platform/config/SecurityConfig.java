@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/index", "/join","/favicon.ico").permitAll()
                         .requestMatchers("/api/posts/search").permitAll()
                         .requestMatchers("/api/posts/{postId}").permitAll()
+                        .requestMatchers("/api/reservations").permitAll()
+                        .requestMatchers("/api/reservations/{reservationId}").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
