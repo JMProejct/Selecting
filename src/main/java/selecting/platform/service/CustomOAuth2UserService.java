@@ -51,6 +51,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2Response.getEmail();
         User existData = userRepository.findByUsername(email).orElse(null);
 
+        // 랜덤 비밀번호 생성
+        String randomPassword = UUID.randomUUID().toString();
         // 신규 회원인 경우
         if(existData == null) {
             User user = new User();
@@ -61,8 +63,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setProviderType(ProviderType.valueOf(registrationId));
             user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
-            // 랜덤 비밀번호 생성
-            String randomPassword = UUID.randomUUID().toString();
             user.setPassword(bCryptPasswordEncoder.encode(randomPassword)); // 비밀번호 암호화 저장
 
             userRepository.save(user);
@@ -74,7 +74,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             return new CustomOAuth2User(userDto);
         }
+        // 기존 유저가 있을시 sso 로그인으로 전환
         else {
+            if (existData.getProviderType() == ProviderType.LOCAL) {
+                // 기존 로컬 회원 → 소셜 로그인 정보 업데이트
+                existData.setProviderType(ProviderType.valueOf(registrationId));
+                existData.setPassword(bCryptPasswordEncoder.encode(randomPassword)); // 비밀번호 랜덤으로 설정 (소셜 로그인 사용)
+            }
             existData.setName(oAuth2Response.getName());
             existData.setEmail(oAuth2Response.getEmail());
 
