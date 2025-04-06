@@ -48,7 +48,7 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(username, password)
             );
 
-            String token = jwtUtil.createJwt(username, "NORMAL", 60 * 60 * 60L);
+            String token = jwtUtil.createJwt(username, "NORMAL", 1000L * 60 * 60);
 
             response.addCookie(createCookie("Authorization", token));
             response.sendRedirect("/main");
