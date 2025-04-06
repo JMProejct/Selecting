@@ -2,6 +2,7 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import selecting.platform.model.Enum.ProviderType;
 import selecting.platform.model.Enum.Role;
 
@@ -48,6 +49,14 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private TeacherProfile teacherProfile;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(updatable = false)
     private Timestamp createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        if(createdAt == null) {
+            createdAt = new Timestamp(System.currentTimeMillis());
+        }
+    }
 }
