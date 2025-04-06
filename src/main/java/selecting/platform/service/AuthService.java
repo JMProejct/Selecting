@@ -2,6 +2,7 @@ package selecting.platform.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import selecting.platform.model.User;
 import java.io.IOException;
 import java.sql.Timestamp;
 
+@Slf4j
 @Service
 public class AuthService {
 
@@ -77,7 +79,6 @@ public class AuthService {
                 .profileImage(user.getProfileImage())
                 .providerType(ProviderType.LOCAL)
                 .role(Role.NORMAL)
-                .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build();
 
         userService.save(newUser);
@@ -85,9 +86,11 @@ public class AuthService {
     }
 
     public ResponseEntity<?> logout(HttpServletResponse response) {
+        log.info("로그아웃 실행됨");
         Cookie cookie = new Cookie("Authorization", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
         return ResponseEntity.ok("로그아웃 성공");
     }

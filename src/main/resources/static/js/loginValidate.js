@@ -5,8 +5,8 @@ function loginValidate(event) {
     if(usernameOrEmail==null||password==null){
         alert("값을 입력해주세요")
     }
-    else if(usernameOrEmail.length<6||usernameOrEmail.length>12){
-        alert("아이디를 6~12글자로 입력해주세요");
+    else if(usernameOrEmail.length<6){
+        alert("아이디를 6글자 이상으로 입력해주세요");
         event.preventDefault();
     }
     else if(password.length<6||password.length>12){

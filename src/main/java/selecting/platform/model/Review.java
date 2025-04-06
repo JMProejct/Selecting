@@ -2,6 +2,7 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -31,6 +32,14 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String comment;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(updatable = false)
     private Timestamp createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        if(createdAt == null) {
+            createdAt = new Timestamp(System.currentTimeMillis());
+        }
+    }
 }

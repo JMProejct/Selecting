@@ -73,6 +73,11 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        http
+                .logout((logout)->logout
+                        .logoutUrl("/logout")
+                        .deleteCookies("Authorization")
+                );
         return http.build();
     }
 

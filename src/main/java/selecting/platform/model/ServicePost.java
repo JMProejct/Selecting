@@ -2,6 +2,7 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -40,6 +41,14 @@ public class ServicePost {
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(updatable = false)
     private Timestamp createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        if(createdAt == null) {
+            createdAt = new Timestamp(System.currentTimeMillis());
+        }
+    }
 }
