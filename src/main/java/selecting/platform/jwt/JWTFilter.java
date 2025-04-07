@@ -10,9 +10,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import selecting.platform.dto.CustomOAuth2User;
-import selecting.platform.dto.UserDto;
 import selecting.platform.model.Enum.Role;
+import selecting.platform.model.User;
+import selecting.platform.security.CustomUserDetails;
 
 import java.io.IOException;
 
@@ -41,28 +41,33 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 쿠키들을 가져와서 Authorization key 에 담긴 쿠키를 찾음
         String authorization = null;
-        Cookie[] cookies = request.getCookies();
 
-        if (cookies == null) {
-            filterChain.doFilter(request, response);
-            return;
+        // 1. Authorization 헤더에서 Bearer 토큰 추출
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            authorization = authHeader.substring(7);
         }
 
-        for(Cookie cookie : cookies) {
-            if(cookie.getName().equals("Authorization")) {
-                authorization = cookie.getValue();
+        // 2. Authorization 쿠키에서 토큰 추출 (헤더에 없을 때만)
+        if (authorization == null) {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("Authorization".equals(cookie.getName())) {
+                        authorization = cookie.getValue();
+                        break;
+                    }
+                }
             }
         }
 
-        //Authorization 헤더 검증
+        //토큰이 없을 경우 다음 필터로 넘김
         if(authorization == null) {
-
-            logger.info("token null");
             filterChain.doFilter(request, response);
             return;
         }
 
-        //토큰
+        //토큰 만료 여부 확인
         String token = authorization;
 
         if (jwtUtil.isExpired(token)) {
@@ -75,16 +80,19 @@ public class JWTFilter extends OncePerRequestFilter {
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
-        UserDto userDto = new UserDto();
-        userDto.setUsername(username);
-        userDto.setRole(Role.valueOf(role));
+        System.out.println("유저 아이디: " + username);
+        System.out.println("유저 권한: " + role);
 
-        // UserDetails 에 회원 정보 객체 담기
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
+        // 실제 사용자 객체 생성
+        User user = new User();
+        user.setEmail(username);
+        user.setRole(Role.valueOf(role));
 
-        // 스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
-        // 세션에 사용자 등록
+        // Spring Security UserDetails로 래핑
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+
+        // 시큐리티 인증 객체 생성 및 등록
+        Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

@@ -1,31 +1,34 @@
 package selecting.platform.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import selecting.platform.dto.reservations.ReservationRequestDto;
 import selecting.platform.dto.reservations.ReservationResponseDto;
-import selecting.platform.security.CustomUserDetails;
+import selecting.platform.model.User;
 import selecting.platform.service.ReservationService;
+import selecting.platform.service.UserService;
+import selecting.platform.util.AuthUtil;
 
 @RestController
 @RequestMapping("/api")
 public class ReservationController {
 
+    private final AuthUtil authUtil;
 
     private final ReservationService reservationService;
 
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(UserService userService, AuthUtil authUtil, ReservationService reservationService) {
+        this.authUtil = authUtil;
         this.reservationService = reservationService;
     }
 
     @PostMapping("/reservations")
     public ResponseEntity<ReservationResponseDto> reserve(
-            @RequestBody ReservationRequestDto requestDto,
-            @AuthenticationPrincipal CustomUserDetails userDetails ) {
-        return ResponseEntity.ok(reservationService.createReservation(requestDto, userDetails.getUser().getUserId()));
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody ReservationRequestDto requestDto) {
+
+        String token = authHeader.replace("Bearer ", "");
+        User user = authUtil.getUserFromToken(token);
+        return ResponseEntity.ok(reservationService.createReservation(requestDto, user.getUserId()));
     }
 }

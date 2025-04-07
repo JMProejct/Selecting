@@ -6,6 +6,7 @@ import selecting.platform.dto.reservations.ReservationRequestDto;
 import selecting.platform.dto.reservations.ReservationResponseDto;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
+import selecting.platform.model.Enum.Status;
 import selecting.platform.model.Reservation;
 import selecting.platform.model.ServicePost;
 import selecting.platform.repository.ReservationRepository;
@@ -35,6 +36,7 @@ public class ReservationService {
                 .student(userRepository.findById(studentId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)))
                 .reservationDate(requestDto.getReservationDate())
+                .status(Status.PENDING) // 임의로 추가
                 .build();
 
         reservationRepository.save(reservation);
