@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import selecting.platform.model.User;
 import selecting.platform.service.UserService;
 import selecting.platform.util.AuthUtil;
 
@@ -26,11 +25,9 @@ public class UserController {
     @GetMapping("/profile")
     public String profile(@CookieValue(name = "Authorization", required = false) String token, Model model) {
         try {
-            User user = authUtil.getUserFromToken(token);
-            model.addAttribute("user", user);
+            model.addAttribute("user", authUtil.getUserFromToken(token));
             return "user/profile";
         } catch (RuntimeException e) {
-            log.error("프로필 조회 실패: {}", e.getMessage());
             model.addAttribute("errorMessage", e.getMessage());
             return "error";
         }

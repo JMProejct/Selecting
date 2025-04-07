@@ -4,31 +4,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import selecting.platform.dto.reservations.ReservationRequestDto;
 import selecting.platform.dto.reservations.ReservationResponseDto;
-import selecting.platform.model.User;
 import selecting.platform.service.ReservationService;
-import selecting.platform.service.UserService;
 import selecting.platform.util.AuthUtil;
 
 @RestController
 @RequestMapping("/api")
 public class ReservationController {
 
+    private final ReservationService reservationService;
     private final AuthUtil authUtil;
 
-    private final ReservationService reservationService;
-
-    public ReservationController(UserService userService, AuthUtil authUtil, ReservationService reservationService) {
-        this.authUtil = authUtil;
+    public ReservationController(ReservationService reservationService, AuthUtil authUtil) {
         this.reservationService = reservationService;
+        this.authUtil = authUtil;
     }
 
     @PostMapping("/reservations")
     public ResponseEntity<ReservationResponseDto> reserve(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody ReservationRequestDto requestDto) {
-
+            @RequestBody ReservationRequestDto requestDto,
+            @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        User user = authUtil.getUserFromToken(token);
-        return ResponseEntity.ok(reservationService.createReservation(requestDto, user.getUserId()));
+        return ResponseEntity.ok(reservationService.createReservation(requestDto, authUtil.getUserFromToken(token).getUserId()));
     }
 }
