@@ -36,7 +36,7 @@ public class ReservationService {
                 .student(userRepository.findById(studentId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)))
                 .reservationDate(requestDto.getReservationDate())
-                .status(Status.PENDING) // 임의로 추가
+                .status(Status.CANCELLED) // 임의 값 추가
                 .build();
 
         reservationRepository.save(reservation);
