@@ -2,6 +2,7 @@ package selecting.platform.dto.reservations;
 
 import lombok.Builder;
 import lombok.Data;
+import selecting.platform.model.Reservation;
 
 import java.time.LocalDateTime;
 
@@ -14,4 +15,5 @@ public class ReservationResponseDto {
     private Integer studentId;
     private LocalDateTime reservationDate;
     private String status;
+
 }
