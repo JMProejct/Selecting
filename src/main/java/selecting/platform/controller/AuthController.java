@@ -1,6 +1,7 @@
 package selecting.platform.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,13 +11,10 @@ import selecting.platform.service.AuthService;
 import java.io.IOException;
 
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     // 회원가입 페이지로 이동
     @GetMapping("/join")

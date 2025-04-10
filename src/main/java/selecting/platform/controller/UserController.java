@@ -1,5 +1,6 @@
 package selecting.platform.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +13,11 @@ import selecting.platform.util.AuthUtil;
 @Slf4j
 @Controller
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final AuthUtil authUtil;
-
-    public UserController(UserService userService, AuthUtil authUtil) {
-        this.userService = userService;
-        this.authUtil = authUtil;
-    }
 
     @GetMapping("/profile")
     public String profile(@CookieValue(name = "Authorization", required = false) String token, Model model) {
