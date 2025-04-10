@@ -20,6 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/sub");
+        // 클라이언트가 메세지를 보낼때 해당 경로로 시작하면 @MessageMapping 메서드로 라우팅
         registry.setApplicationDestinationPrefixes("/pub");
     }
 }
