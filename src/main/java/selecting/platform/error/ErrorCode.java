@@ -31,6 +31,7 @@ public enum ErrorCode {
     // 🗓️ [예약 / 결제]
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "401", "예약 정보를 찾을 수 없습니다."),
     PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "402", "결제 처리에 실패했습니다."),
+    INVALID_STATUS_TRANSITION(HttpStatus.BAD_REQUEST, "RES-002" , "이미 확정된 예약은 다시 대기 상태로 변경할 수 없습니다."),
 
     // 📝 [리뷰]
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "501", "리뷰를 찾을 수 없습니다."),
