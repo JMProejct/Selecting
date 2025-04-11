@@ -5,6 +5,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import selecting.platform.dto.reservations.ReservationRequestDto;
 import selecting.platform.dto.reservations.ReservationResponseDto;
+import selecting.platform.error.ErrorCode;
+import selecting.platform.error.exception.CustomException;
+import selecting.platform.model.Enum.Role;
+import selecting.platform.model.User;
 import selecting.platform.security.CustomUserDetails;
 import selecting.platform.service.ReservationService;
 import selecting.platform.util.AuthUtil;
@@ -48,15 +52,21 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.rejectReservation(id, userDetails.getUser()));
     }
 
-    // 교사기준 전체 예약내역 조회
-    @GetMapping("/reservations/teacher")
-    public ResponseEntity<List<ReservationResponseDto>> getReservationsForTeacher(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(reservationService.getReservationsByTeacher(userDetails.getUser()));
+    // 나의 예약 조회
+    @GetMapping("/my")
+    public ResponseEntity<List<ReservationResponseDto>> getMyReservations(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        User user = userDetails.getUser();
+
+        if (user.getRole() == Role.TUTOR) {
+            return ResponseEntity.ok(reservationService.getReservationsByTeacher(user));
+        } else if (user.getRole() == Role.NORMAL) {
+            return ResponseEntity.ok(reservationService.getReservationsByStudent(user));
+        } else {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
     }
 
-    // 학생 본인 예약 내역 조회
-    @GetMapping("/reservations/student")
-    public ResponseEntity<List<ReservationResponseDto>> getReservationsForStudent(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(reservationService.getReservationsByStudent(userDetails.getUser()));
-    }
+
 }

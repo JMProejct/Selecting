@@ -157,33 +157,31 @@ public class ReservationService {
     }
 
 
-    public List<ReservationResponseDto> getReservationsByTeacher(User teacher) {
-        List<Reservation> reservations = reservationRepository.findByPost_User(teacher);
-        return reservations.stream()
-                .map(res -> ReservationResponseDto.builder()
-                        .reservationId(res.getReservationId())
-                        .postId(res.getPost().getPostId())
-                        .postTitle(res.getPost().getTitle())
-                        .studentId(res.getStudent().getUserId())
-                        .studentName(res.getStudent().getName())
-                        .reservationDate(res.getReservationDate())
-                        .status(res.getStatus().name())
-                        .build())
+    // 학생 기준 나의 예약 조회
+    public List<ReservationResponseDto> getReservationsByStudent(User student) {
+        return reservationRepository.findByStudent(student).stream()
+                .map(this::toDto)
                 .toList();
     }
 
-    public List<ReservationResponseDto> getReservationsByStudent(User student) {
-        List<Reservation> reservations = reservationRepository.findByStudent(student);
-        return reservations.stream()
-                .map(res -> ReservationResponseDto.builder()
-                        .reservationId(res.getReservationId())
-                        .postId(res.getPost().getPostId())
-                        .postTitle(res.getPost().getTitle())
-                        .studentId(res.getStudent().getUserId())
-                        .studentName(res.getStudent().getName())
-                        .reservationDate(res.getReservationDate())
-                        .status(res.getStatus().name())
-                        .build())
+
+    // 선생 기준 나의 예약 조회
+    public List<ReservationResponseDto> getReservationsByTeacher(User teacher) {
+        return reservationRepository.findByTeacher(teacher).stream()
+                .map(this::toDto)
                 .toList();
+    }
+
+
+    private ReservationResponseDto toDto(Reservation reservation) {
+        return ReservationResponseDto.builder()
+                .reservationId(reservation.getReservationId())
+                .postId(reservation.getPost().getPostId())
+                .postTitle(reservation.getPost().getTitle())
+                .studentId(reservation.getStudent().getUserId())
+                .studentName(reservation.getStudent().getName())
+                .reservationDate(reservation.getReservationDate())
+                .status(reservation.getStatus().name())
+                .build();
     }
 }
