@@ -1,4 +1,4 @@
-package selecting.platform.dto.chat;
+package selecting.platform.dto.chatMessage;
 
 import lombok.Getter;
 import lombok.Setter;
