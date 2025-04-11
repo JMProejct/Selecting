@@ -1,4 +1,4 @@
-package selecting.platform.dto;
+package selecting.platform.dto.oauth2;
 
 public interface OAuth2Response {
 

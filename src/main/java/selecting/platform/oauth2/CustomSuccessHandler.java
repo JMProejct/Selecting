@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import selecting.platform.dto.CustomOAuth2User;
+import selecting.platform.dto.oauth2.CustomOAuth2User;
 import selecting.platform.jwt.JWTUtil;
 
 import java.io.IOException;
