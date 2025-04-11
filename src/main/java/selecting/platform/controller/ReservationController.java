@@ -53,7 +53,7 @@ public class ReservationController {
     }
 
     // 나의 예약 조회
-    @GetMapping("/my")
+    @GetMapping("/reservations/my")
     public ResponseEntity<List<ReservationResponseDto>> getMyReservations(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
