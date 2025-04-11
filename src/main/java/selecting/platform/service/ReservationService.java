@@ -2,20 +2,17 @@ package selecting.platform.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import selecting.platform.dto.reservations.AvailableTimeRequestDto;
+import selecting.platform.dto.reservations.AvailableTimeResponseDto;
 import selecting.platform.dto.reservations.ReservationRequestDto;
 import selecting.platform.dto.reservations.ReservationResponseDto;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
+import selecting.platform.model.*;
 import selecting.platform.model.Enum.Status;
-import selecting.platform.model.Reservation;
-import selecting.platform.model.ReservationLog;
-import selecting.platform.model.ServicePost;
-import selecting.platform.model.User;
-import selecting.platform.repository.ReservationLogRepository;
-import selecting.platform.repository.ReservationRepository;
-import selecting.platform.repository.ServicePostRepository;
-import selecting.platform.repository.UserRepository;
+import selecting.platform.repository.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,12 +23,14 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final ReservationLogRepository reservationLogRepository;
+    private final TeacherAvailableTimeRepository teacherAvailableTimeRepository;
 
-    public ReservationService(ServicePostRepository servicePostRepository, UserRepository userRepository, ReservationRepository reservationRepository, ReservationLogRepository reservationLogRepository) {
+    public ReservationService(ServicePostRepository servicePostRepository, UserRepository userRepository, ReservationRepository reservationRepository, ReservationLogRepository reservationLogRepository, TeacherAvailableTimeRepository teacherAvailableTimeRepository) {
         this.servicePostRepository = servicePostRepository;
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
         this.reservationLogRepository = reservationLogRepository;
+        this.teacherAvailableTimeRepository = teacherAvailableTimeRepository;
     }
 
     
@@ -183,5 +182,31 @@ public class ReservationService {
                 .reservationDate(reservation.getReservationDate())
                 .status(reservation.getStatus().name())
                 .build();
+    }
+
+
+    // 교사 시간 확인
+    public List<AvailableTimeResponseDto> getAvailableTimes(User teacher) {
+        return teacherAvailableTimeRepository.findByTeacher(teacher).stream()
+                .map(t -> AvailableTimeResponseDto.builder()
+                        .availableId(t.getAvailableId())
+                        .dayOfWeek(t.getDayOfWeek().name())
+                        .startTime(t.getStartTime())
+                        .endTime(t.getEndTime())
+                        .build())
+                .toList();
+    }
+
+    // 교사 이용 가능한 시간대
+    @Transactional
+    public void addAvailableTime(User teacher, AvailableTimeRequestDto dto) {
+        TeacherAvailableTime time = TeacherAvailableTime.builder()
+                .teacher(teacher)
+                .dayOfWeek(DayOfWeek.valueOf(dto.getDayOfWeek().toUpperCase()))
+                .startTime(dto.getStartTime())
+                .endTime(dto.getEndTime())
+                .build();
+
+        teacherAvailableTimeRepository.save(time);
     }
 }
