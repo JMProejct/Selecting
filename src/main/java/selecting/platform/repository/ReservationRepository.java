@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import selecting.platform.model.Reservation;
 import selecting.platform.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
@@ -16,4 +17,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     @Query("SELECT r FROM Reservation r WHERE r.post.user = :teacher")
     List<Reservation> findByTeacher(@Param("teacher") User teacher);
+
+    boolean existsByPost_UserAndReservationDate(User teacher, LocalDateTime dateTime);
 }

@@ -14,6 +14,7 @@ import selecting.platform.repository.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -41,6 +42,10 @@ public class ReservationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         User student = userRepository.findById(studentId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!isReservable(post.getUser(), requestDto.getReservationDate())) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
 
         Reservation reservation = Reservation.builder()
                 .post(post)
@@ -197,7 +202,7 @@ public class ReservationService {
                 .toList();
     }
 
-    // 교사 이용 가능한 시간대
+    // 교사 시간 확정
     @Transactional
     public void addAvailableTime(User teacher, AvailableTimeRequestDto dto) {
         TeacherAvailableTime time = TeacherAvailableTime.builder()
@@ -208,5 +213,27 @@ public class ReservationService {
                 .build();
 
         teacherAvailableTimeRepository.save(time);
+    }
+
+    // 예약 가능한지 자동 확인
+    public boolean isReservable(User teacher, LocalDateTime requestedDateTime) {
+        DayOfWeek requestedDay = requestedDateTime.getDayOfWeek();
+        LocalTime requestedTime = requestedDateTime.toLocalTime();
+
+
+        // 가능한 시간대 확인
+        boolean inAvailableTime = teacherAvailableTimeRepository.existsByTeacherAndDayOfWeekAndStartTimeLessThanEqualAndEndTimeGreaterThan(
+                teacher,
+                requestedDay,
+                requestedTime,
+                requestedTime
+        );
+
+        if (inAvailableTime) {return false;}
+
+        // 중복 예약 확인
+        boolean hasConflict = reservationRepository.existsByPost_UserAndReservationDate(teacher, requestedDateTime);
+
+        return !hasConflict;
     }
 }
