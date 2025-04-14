@@ -18,4 +18,6 @@ public interface TeacherAvailableTimeRepository extends JpaRepository<TeacherAva
                                                                                        DayOfWeek dayOfWeek,
                                                                                        LocalTime startTime,
                                                                                        LocalTime endTime);
+
+    List<TeacherAvailableTime> findByTeacherAndDayOfWeek(User teacher, DayOfWeek dayOfWeek);
 }

@@ -19,4 +19,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     List<Reservation> findByTeacher(@Param("teacher") User teacher);
 
     boolean existsByPost_UserAndReservationDate(User teacher, LocalDateTime dateTime);
+
+    List<Reservation> findByPost_UserAndReservationDateBetween(User postUser, LocalDateTime reservationDateAfter, LocalDateTime reservationDateBefore);
 }
