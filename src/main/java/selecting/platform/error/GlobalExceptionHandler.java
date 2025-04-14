@@ -15,13 +15,6 @@ import selecting.platform.error.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-    private final View error;
-
-    public GlobalExceptionHandler(View error) {
-        this.error = error;
-    }
-
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("\uD83D\uDD25 CustomException 발생: {} - {}", e.getErrorCode(), e.getMessage(), e);

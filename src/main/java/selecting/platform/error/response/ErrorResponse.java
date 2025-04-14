@@ -1,12 +1,16 @@
 package selecting.platform.error.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import selecting.platform.error.ErrorCode;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ErrorResponse {
 
