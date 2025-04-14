@@ -2,6 +2,7 @@ package selecting.platform.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import selecting.platform.dto.calendar.TimeRange;
 import selecting.platform.dto.calendar.TimeSlotDto;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
@@ -12,6 +13,7 @@ import selecting.platform.repository.ReservationRepository;
 import selecting.platform.repository.TeacherAvailableTimeRepository;
 import selecting.platform.repository.UserRepository;
 
+import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -49,10 +51,13 @@ public class CalendarServiceImpl implements CalendarService {
                         date.plusDays(1).atStartOfDay());
 
 
-        // 예약된 시간 리스트로 정리
-        Set<LocalTime> reservedTimes = reservations.stream()
-                .map(r -> r.getReservationDate().toLocalTime())
-                .collect(Collectors.toSet());
+        // 예약 시간 범위를 리스트화
+        List<TimeRange> reservedRanges = reservations.stream()
+                .map(r -> new TimeRange(
+                        r.getReservationDate().toLocalTime(),
+                        r.getReservationDate().toLocalTime().plusMinutes(60)))
+                .collect(Collectors.toList());
+
 
         // 반환할 시간대 리스트 구성
         List<TimeSlotDto> result = new ArrayList<>();
@@ -62,8 +67,8 @@ public class CalendarServiceImpl implements CalendarService {
             LocalTime end = availableTime.getEndTime();
 
             while (start.isBefore(end)) {
-                LocalTime next = start.plusMinutes(60); // 1시간
-                String status = reservedTimes.contains(start) ? "RESERVED" : "AVAILABLE";
+                LocalTime next = start.plusMinutes(30); // 30분 단위
+                String status = reservedRanges.contains(start) ? "RESERVED" : "AVAILABLE";
 
                 result.add(new TimeSlotDto(start, next, status));
                 start = next;
