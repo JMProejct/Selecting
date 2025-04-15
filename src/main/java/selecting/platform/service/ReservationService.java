@@ -9,6 +9,7 @@ import selecting.platform.dto.reservations.ReservationResponseDto;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
 import selecting.platform.model.*;
+import selecting.platform.model.Enum.NotificationType;
 import selecting.platform.model.Enum.Status;
 import selecting.platform.repository.*;
 
@@ -109,10 +110,11 @@ public class ReservationService {
         reservationLogRepository.save(log);
 
         // 알림 전송 (학생에게)
+        NotificationType type = NotificationType.RESERVATION_APPROVED;
         notificationService.send(
                 reservation.getPost().getUser(),
-                String.format("✅ [%s] 수업 예약이 승인되었습니다.", teacher.getName(), reservation.getPost().getTitle()),
-                "RESERVATION_APPROVED"
+                String.format("%s [%s] 수업", type.toString(), reservation.getPost().getTitle()),
+                type
         );
 
 
@@ -154,10 +156,11 @@ public class ReservationService {
                 .build());
 
         // 알림 전송 (학생에게)
+        NotificationType type = NotificationType.RESERVATION_REJECTED;
         notificationService.send(
                 reservation.getPost().getUser(),
-                String.format("❌ [%s] 수업 예약이 거절되었습니다.", teacher.getName(), reservation.getPost().getTitle()),
-                "RESERVATION_REJECTED"
+                String.format("%s [%s] 수업", type.toString(), reservation.getPost().getTitle()),
+                type
         );
 
         return ReservationResponseDto.builder()
@@ -220,10 +223,11 @@ public class ReservationService {
         }
 
         // 알림 전송 (교사에게)
+        NotificationType type = NotificationType.RESERVATION_CANCELLED;
         notificationService.send(
                 reservation.getPost().getUser(),
-                String.format("\uD83D\uDCE2 학생 %s 님이 [%s] 수업 예약을 취소했습니다.", student.getName(), reservation.getPost().getTitle()),
-                "RESERVATION_CANCELLED"
+                String.format("%s [%s] 학생", student.getName(), reservation.getPost().getTitle()),
+                type
         );
 
 

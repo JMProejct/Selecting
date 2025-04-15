@@ -3,6 +3,8 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import selecting.platform.model.Enum.NotificationType;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,7 +26,9 @@ public class Notification {
 
     private String message;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private NotificationType type;
 
     @Column(name = "is_read")
     private Boolean isRead;
