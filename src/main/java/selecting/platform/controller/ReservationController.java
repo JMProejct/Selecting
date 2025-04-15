@@ -72,4 +72,16 @@ public class ReservationController {
     }
 
 
+    // 학생이 자신의 예약 취소
+    @PreAuthorize("hasRole('NORMAL')")
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<ReservationResponseDto> cancelReservation(
+            @PathVariable Integer reservationId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User student = userDetails.getUser();
+        ReservationResponseDto response = reservationService.cancelReservation(reservationId, student);
+        return ResponseEntity.ok(response);
+    }
+
+
 }

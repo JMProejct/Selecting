@@ -26,14 +26,16 @@ public class ReservationService {
     private final ReservationLogRepository reservationLogRepository;
     private final TeacherAvailableTimeRepository teacherAvailableTimeRepository;
     private final PaymentRepository paymentRepository;
+    private final NotificationService notificationService;
 
-    public ReservationService(ServicePostRepository servicePostRepository, UserRepository userRepository, ReservationRepository reservationRepository, ReservationLogRepository reservationLogRepository, TeacherAvailableTimeRepository teacherAvailableTimeRepository, PaymentRepository paymentRepository) {
+    public ReservationService(ServicePostRepository servicePostRepository, UserRepository userRepository, ReservationRepository reservationRepository, ReservationLogRepository reservationLogRepository, TeacherAvailableTimeRepository teacherAvailableTimeRepository, PaymentRepository paymentRepository, NotificationService notificationService) {
         this.servicePostRepository = servicePostRepository;
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
         this.reservationLogRepository = reservationLogRepository;
         this.teacherAvailableTimeRepository = teacherAvailableTimeRepository;
         this.paymentRepository = paymentRepository;
+        this.notificationService = notificationService;
     }
 
     
@@ -79,7 +81,7 @@ public class ReservationService {
     }
 
 
-    // 예약 승인
+    // (교사가) 예약 승인
     public ReservationResponseDto approveReservation(Integer reservationId, User teacher) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
@@ -105,6 +107,13 @@ public class ReservationService {
                 .changedAt(LocalDateTime.now())
                 .build();
         reservationLogRepository.save(log);
+
+        // 알림 전송 (학생에게)
+        notificationService.send(
+                reservation.getPost().getUser(),
+                String.format("✅ [%s] 수업 예약이 승인되었습니다.", teacher.getName(), reservation.getPost().getTitle()),
+                "RESERVATION_APPROVED"
+        );
 
 
         return ReservationResponseDto.builder()
@@ -143,6 +152,13 @@ public class ReservationService {
                 .newStatus(newStatus.name())
                 .changedAt(LocalDateTime.now())
                 .build());
+
+        // 알림 전송 (학생에게)
+        notificationService.send(
+                reservation.getPost().getUser(),
+                String.format("❌ [%s] 수업 예약이 거절되었습니다.", teacher.getName(), reservation.getPost().getTitle()),
+                "RESERVATION_REJECTED"
+        );
 
         return ReservationResponseDto.builder()
                 .reservationId(reservation.getReservationId())
@@ -189,13 +205,26 @@ public class ReservationService {
         Status oldStatus = reservation.getStatus();
         Status newStatus = Status.CANCELLED;
 
-        reservationLogRepository.save(ReservationLog.builder()
-                .reservation(reservation)
-                .changedBy("취소됨")
-                .previousStatus(oldStatus.name())
-                .newStatus(newStatus.name())
-                .changedAt(LocalDateTime.now())
-                .build());
+        if (oldStatus == newStatus) {
+            throw new CustomException(ErrorCode.ALREADY_CANCELLED);
+        }
+
+        if (!oldStatus.equals(newStatus)) {
+            reservationLogRepository.save(ReservationLog.builder()
+                    .reservation(reservation)
+                    .changedBy("취소됨")
+                    .previousStatus(oldStatus.name())
+                    .newStatus(newStatus.name())
+                    .changedAt(LocalDateTime.now())
+                    .build());
+        }
+
+        // 알림 전송 (교사에게)
+        notificationService.send(
+                reservation.getPost().getUser(),
+                String.format("\uD83D\uDCE2 학생 %s 님이 [%s] 수업 예약을 취소했습니다.", student.getName(), reservation.getPost().getTitle()),
+                "RESERVATION_CANCELLED"
+        );
 
 
         return ReservationResponseDto.builder()

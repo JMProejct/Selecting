@@ -34,6 +34,7 @@ public enum ErrorCode {
     INVALID_STATUS_TRANSITION(HttpStatus.BAD_REQUEST, "RES-002" , "이미 확정된 예약은 다시 대기 상태로 변경할 수 없습니다."),
     RESERVATION_NOT_AVAILABLE(HttpStatus.CONFLICT, "RES-003", "해당 시간은 예약할 수 없습니다."),
     CANCELLATION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RES-004", "수업 시작 24시간 이내에는 취소가 불가능합니다."),
+    ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "RES-005", "이미 취소된 예약입니다."),
 
 
     // 💰 [결제]
