@@ -1,6 +1,7 @@
 package selecting.platform.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import selecting.platform.dto.reservations.ReservationRequestDto;
@@ -36,7 +37,8 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.createReservation(requestDto, authUtil.getUserFromToken(token).getUserId()));
     }
 
-    // 예약 승인
+    // (교사) 예약 승인
+    @PreAuthorize("hasRole('TUTOR')")
     @PatchMapping("/reservations/{id}/accept")
     public ResponseEntity<ReservationResponseDto> accept(
             @PathVariable Integer id,
@@ -44,7 +46,8 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.approveReservation(id, userDetails.getUser()));
     }
 
-    // 예약 거절
+    // (교사) 예약 거절
+    @PreAuthorize("hasRole('TUTOR')")
     @PatchMapping("/reservations/{id}/reject")
     public ResponseEntity<ReservationResponseDto> reject(
             @PathVariable Integer id,

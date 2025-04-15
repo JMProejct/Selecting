@@ -25,13 +25,15 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final ReservationLogRepository reservationLogRepository;
     private final TeacherAvailableTimeRepository teacherAvailableTimeRepository;
+    private final PaymentRepository paymentRepository;
 
-    public ReservationService(ServicePostRepository servicePostRepository, UserRepository userRepository, ReservationRepository reservationRepository, ReservationLogRepository reservationLogRepository, TeacherAvailableTimeRepository teacherAvailableTimeRepository) {
+    public ReservationService(ServicePostRepository servicePostRepository, UserRepository userRepository, ReservationRepository reservationRepository, ReservationLogRepository reservationLogRepository, TeacherAvailableTimeRepository teacherAvailableTimeRepository, PaymentRepository paymentRepository) {
         this.servicePostRepository = servicePostRepository;
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
         this.reservationLogRepository = reservationLogRepository;
         this.teacherAvailableTimeRepository = teacherAvailableTimeRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     
@@ -116,7 +118,7 @@ public class ReservationService {
 
 
 
-    // 예약 거절
+    // (교사가 학생 예약을) 예약 거절
     public ReservationResponseDto rejectReservation(Integer reservationId, User teacher) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
@@ -148,6 +150,58 @@ public class ReservationService {
                 .postTitle(reservation.getPost().getTitle())
                 .studentId(reservation.getStudent().getUserId())
                 .studentName(reservation.getStudent().getName())
+                .reservationDate(reservation.getReservationDate())
+                .status(reservation.getStatus().name())
+                .build();
+    }
+
+
+    // (학생이 스스로) 예약 취소
+    @Transactional
+    public ReservationResponseDto cancelReservation(Integer reservationId, User student) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        // 본인 예약만 취소
+        if (!reservation.getPost().getUser().getUserId().equals(student.getUserId())) {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        // 24시간 전까지 취소 가능
+        LocalDateTime now = LocalDateTime.now();
+        if (reservation.getReservationDate().isBefore(now.plusHours(24))) {
+            throw new CustomException(ErrorCode.CANCELLATION_NOT_ALLOWED);
+        }
+
+        // 상태 변경
+        reservation.setStatus(Status.CANCELLED);
+        reservationRepository.save(reservation);
+
+        // 환불 처리
+        Payment payment = paymentRepository.findByReservation(reservation)
+                .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+
+        payment.setStatus("REFUNDED");
+        paymentRepository.save(payment);
+
+
+        // 로그 기록
+        Status oldStatus = reservation.getStatus();
+        Status newStatus = Status.CANCELLED;
+
+        reservationLogRepository.save(ReservationLog.builder()
+                .reservation(reservation)
+                .changedBy("취소됨")
+                .previousStatus(oldStatus.name())
+                .newStatus(newStatus.name())
+                .changedAt(LocalDateTime.now())
+                .build());
+
+
+        return ReservationResponseDto.builder()
+                .reservationId(reservation.getReservationId())
+                .postId(reservation.getPost().getPostId())
+                .studentId(student.getUserId())
                 .reservationDate(reservation.getReservationDate())
                 .status(reservation.getStatus().name())
                 .build();

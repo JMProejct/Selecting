@@ -33,6 +33,11 @@ public enum ErrorCode {
     PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "402", "결제 처리에 실패했습니다."),
     INVALID_STATUS_TRANSITION(HttpStatus.BAD_REQUEST, "RES-002" , "이미 확정된 예약은 다시 대기 상태로 변경할 수 없습니다."),
     RESERVATION_NOT_AVAILABLE(HttpStatus.CONFLICT, "RES-003", "해당 시간은 예약할 수 없습니다."),
+    CANCELLATION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RES-004", "수업 시작 24시간 이내에는 취소가 불가능합니다."),
+
+
+    // 💰 [결제]
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAY-001", "결제 정보를 찾을 수 없습니다."),
 
     // 📝 [리뷰]
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "501", "리뷰를 찾을 수 없습니다."),
