@@ -29,6 +29,6 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String messageText;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column
     private Timestamp sentAt;
 }
