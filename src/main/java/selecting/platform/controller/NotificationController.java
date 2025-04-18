@@ -1,5 +1,6 @@
 package selecting.platform.controller;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,5 +35,13 @@ public class NotificationController {
         User user = userDetails.getUser();
         notificationService.markAsRead(id, user.getUserId());
         return ResponseEntity.ok().build();
+    }
+
+    // 안 읽은 알림 카운트
+    @GetMapping("/unread/count")
+    public ResponseEntity<Long> countUnread(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+        return ResponseEntity.ok(notificationService.countunreadNotifications(user.getUserId()));
     }
 }

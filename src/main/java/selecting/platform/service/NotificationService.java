@@ -62,4 +62,9 @@ public class NotificationService {
         notification.setIsRead(true);
         notificationRepository.save(notification);
     }
+
+    // 안 읽은 알림 카운트
+    public Long countunreadNotifications(Integer userId) {
+        return notificationRepository.countByUserUserIdAndIsReadFalse(userId);
+    }
 }
