@@ -36,6 +36,8 @@ public enum ErrorCode {
     CANCELLATION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RES-004", "수업 시작 24시간 이내에는 취소가 불가능합니다."),
     ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "RES-005", "이미 취소된 예약입니다."),
 
+    // 🔔 [알림]
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "알림을 찾을 수 없습니다."),
 
     // 💰 [결제]
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAY-001", "결제 정보를 찾을 수 없습니다."),

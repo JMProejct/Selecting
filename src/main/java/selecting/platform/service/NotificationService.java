@@ -1,8 +1,11 @@
 package selecting.platform.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import selecting.platform.dto.reservations.NotificationResponseDto;
+import selecting.platform.error.ErrorCode;
+import selecting.platform.error.exception.CustomException;
 import selecting.platform.model.Enum.NotificationType;
 import selecting.platform.model.Notification;
 import selecting.platform.model.User;
@@ -43,5 +46,20 @@ public class NotificationService {
                         .createdAt(notification.getCreatedAt())
                         .build())
                 .toList();
+    }
+
+
+    // 알림 읽음 처리
+    @Transactional
+    public void markAsRead(Integer notificationId, Integer userId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+        if (!notification.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        notification.setIsRead(true);
+        notificationRepository.save(notification);
     }
 }

@@ -3,9 +3,7 @@ package selecting.platform.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import selecting.platform.dto.reservations.NotificationResponseDto;
 import selecting.platform.model.User;
 import selecting.platform.security.CustomUserDetails;
@@ -26,5 +24,15 @@ public class NotificationController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.getUser();
         return ResponseEntity.ok(notificationService.getUserNotifications(user.getUserId()));
+    }
+
+    // 알림 읽음 처리
+    @PutMapping("/{id}/read")
+    public ResponseEntity<Void> markAsRead(
+            @PathVariable Integer id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+        notificationService.markAsRead(id, user.getUserId());
+        return ResponseEntity.ok().build();
     }
 }
