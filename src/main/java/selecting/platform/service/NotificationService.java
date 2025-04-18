@@ -80,4 +80,25 @@ public class NotificationService {
 
         notificationRepository.saveAll(unreadList); // 성능상 일괄 저장
     }
+
+
+    // 알림 단건 삭제
+    @Transactional
+    public void deleteNotification(Integer notificationId, Integer userId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+        if (!notification.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        notificationRepository.delete(notification);
+    }
+
+    // 알림 전체 삭제
+    @Transactional
+    public void deleteAllNotifications(Integer userId) {
+        List<Notification> userNotifications = notificationRepository.findByUserUserId(userId);
+        notificationRepository.deleteAll(userNotifications);
+    }
 }
