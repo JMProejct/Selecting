@@ -36,7 +36,7 @@ public class NotificationService {
     
     // 알림 목록 조회
     public List<NotificationResponseDto> getUserNotifications(Integer userId) {
-        return notificationRepository.findByUserUserIdOrderByCreatedAtDesc(userId)
+        return notificationRepository.findByUser_UserIdOrderByCreatedAtDesc(userId)
                 .stream()
                 .map(notification -> NotificationResponseDto.builder()
                         .id(notification.getId())

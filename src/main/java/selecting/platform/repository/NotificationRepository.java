@@ -1,7 +1,8 @@
 package selecting.platform.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import selecting.platform.dto.reservations.NotificationResponseDto;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import selecting.platform.model.Notification;
 import selecting.platform.model.User;
 
@@ -12,5 +13,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
     List<Notification> user(User user);
 
-    List<NotificationResponseDto> findByUserUserIdOrderByCreatedAtDesc(Integer userId);
+    @Query("SELECT n FROM Notification n WHERE n.user.userId = :userId ORDER BY n.createdAt DESC")
+    List<Notification> findByUser_UserIdOrderByCreatedAtDesc(@Param("userId") Integer userId);
 }
