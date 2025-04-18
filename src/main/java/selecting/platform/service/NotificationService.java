@@ -67,4 +67,17 @@ public class NotificationService {
     public Long countunreadNotifications(Integer userId) {
         return notificationRepository.countByUserUserIdAndIsReadFalse(userId);
     }
+
+
+    // 전체 읽음 처리 메서드
+    @Transactional
+    public void markAllAsRead(Integer userId) {
+        List<Notification> unreadList = notificationRepository.findByUserUserIdAndIsReadFalse(userId);
+
+        for (Notification notification : unreadList) {
+            notification.setIsRead(true);
+        }
+
+        notificationRepository.saveAll(unreadList); // 성능상 일괄 저장
+    }
 }

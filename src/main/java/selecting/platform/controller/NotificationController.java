@@ -44,4 +44,14 @@ public class NotificationController {
         User user = userDetails.getUser();
         return ResponseEntity.ok(notificationService.countunreadNotifications(user.getUserId()));
     }
+
+
+    // 알림 전체 읽음
+    @PutMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+        notificationService.markAllAsRead(user.getUserId());
+        return ResponseEntity.ok().build();
+    }
 }
