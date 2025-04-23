@@ -1,4 +1,4 @@
-package selecting.platform.dto;
+package selecting.platform.dto.user;
 
 import lombok.Data;
 import selecting.platform.model.Enum.Role;
