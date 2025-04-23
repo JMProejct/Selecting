@@ -24,6 +24,9 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "202", "이미 존재하는 사용자입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "이미 사용 중인 이메일입니다."),
     USER_INVALID_ROLE(HttpStatus.BAD_REQUEST, "203", "사용자 권한이 올바르지 않습니다."),
+    ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "이미 사용 중인 아이디입니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "401", "비밀번호가 일치하지 않습니다."),
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "401", "아이디 또는 비밀번호가 올바르지 않습니다."),
 
     // 📚 [게시글 / 과외]
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "301", "해당 게시글을 찾을 수 없습니다."),
