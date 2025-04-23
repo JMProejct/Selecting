@@ -30,4 +30,11 @@ public class ChatRoomController {
             (@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(chatRoomService.getChatRooms(userDetails.getUserId()));
     }
+
+    @DeleteMapping("/exit/{roomId}")
+    public ResponseEntity<?> exitChatRoom(@PathVariable Integer roomId,
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        chatRoomService.exitChatRoom(roomId, userDetails.getUserId());
+        return ResponseEntity.ok().build();
+    }
 }

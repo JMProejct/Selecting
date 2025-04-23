@@ -8,6 +8,7 @@ import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
 import selecting.platform.model.ChatMessage;
 import selecting.platform.model.ChatRoom;
+import selecting.platform.model.Enum.ExitStatus;
 import selecting.platform.model.ServicePost;
 import selecting.platform.model.User;
 import selecting.platform.repository.ChatMessageRepository;
@@ -50,7 +51,14 @@ public class ChatRoomService {
     public List<ChatRoomResponseDto> getChatRooms(Integer userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserUserId(userId);
 
-        return chatRooms.stream().map(chatRoom -> {
+        return chatRooms.stream()
+                .filter(chatRoom -> {
+                    boolean isPostOwner = chatRoom.getPost().getUser().getUserId().equals(userId);
+                    return isPostOwner
+                            ? chatRoom.getPostUserExitStatus() == ExitStatus.ACTIVE
+                            : chatRoom.getUserExitStatus() == ExitStatus.ACTIVE;
+                })
+                .map(chatRoom -> {
             // 상대방 가져오기
             User chatPartner = chatRoom.getUser().getUserId().equals(userId)
                     ? chatRoom.getPost().getUser()
@@ -74,5 +82,20 @@ public class ChatRoomService {
                     .unreadMessageCount(unreadCount)
                     .build();
         }).toList();
+    }
+
+    public void exitChatRoom(Integer roomId, Integer userId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUNT));
+
+        if (chatRoom.getPost().getUser().getUserId().equals(userId)) {
+            chatRoom.setPostUserExitStatus(ExitStatus.EXITED);
+        } else if (chatRoom.getUser().getUserId().equals(userId)) {
+            chatRoom.setUserExitStatus(ExitStatus.EXITED);
+        } else {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        chatRoomRepository.save(chatRoom);
     }
 }
