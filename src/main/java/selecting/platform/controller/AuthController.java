@@ -1,6 +1,7 @@
 package selecting.platform.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ public class AuthController {
     public String loginPage() {
         return "login";
     }
+
 
     @PostMapping("/login")
     public void login(@RequestParam("usernameOrEmail") String usernameOrEmail,

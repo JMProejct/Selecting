@@ -22,6 +22,7 @@ public enum ErrorCode {
     // 🙍‍♂️ [사용자]
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "201", "해당 사용자를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "202", "이미 존재하는 사용자입니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "이미 사용 중인 이메일입니다."),
     USER_INVALID_ROLE(HttpStatus.BAD_REQUEST, "203", "사용자 권한이 올바르지 않습니다."),
 
     // 📚 [게시글 / 과외]

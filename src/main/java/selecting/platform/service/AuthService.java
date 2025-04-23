@@ -35,7 +35,7 @@ public class AuthService {
             User user = userService.findByUsernameOrEmail(usernameOrEmail);
 
             if (user == null) {
-                throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+                throw new CustomException(ErrorCode.USER_NOT_FOUND);
             }
 
             String username = user.getUsername();
@@ -60,7 +60,7 @@ public class AuthService {
         }
 
         if (userService.existsByEmail(user.getEmail())) {
-            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
