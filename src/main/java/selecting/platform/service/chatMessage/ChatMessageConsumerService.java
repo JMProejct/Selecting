@@ -3,6 +3,7 @@ package selecting.platform.service.chatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import selecting.platform.dto.chatMessage.ChatMessageDto;
@@ -22,11 +23,15 @@ import java.util.stream.Collectors;
 public class ChatMessageConsumerService {
 
     private final ChatMessageRepository chatMessageRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     private final Queue<ChatMessageDto> messageQueue = new ConcurrentLinkedQueue<>();
 
     @KafkaListener(topics = "chatMessage_log",groupId = "chatMessage-group")
     public void listen(ChatMessageDto chatMessageDto) {
+        String destination = "/sub/chat/" + chatMessageDto.getRoomId();
+        messagingTemplate.convertAndSend(destination, chatMessageDto);
+
         messageQueue.offer(chatMessageDto);
     }
 
