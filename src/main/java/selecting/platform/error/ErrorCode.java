@@ -53,7 +53,10 @@ public enum ErrorCode {
     // 📁 [파일 업로드]
     FILE_INVALID_TYPE(HttpStatus.BAD_REQUEST, "601", "허용되지 않는 파일 형식입니다."),
     FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "602", "파일 크기 제한을 초과했습니다."),
-    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "603", "파일 업로드에 실패했습니다.");
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "603", "파일 업로드에 실패했습니다."),
+
+    // 💬 [채팅]
+    CHATROOM_NOT_FOUNT(HttpStatus.BAD_REQUEST,"701","채팅방이 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String errorCode;
