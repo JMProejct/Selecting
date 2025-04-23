@@ -2,7 +2,9 @@ package selecting.platform.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import selecting.platform.dto.reservations.NotificationMessage;
 import selecting.platform.dto.reservations.NotificationResponseDto;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
@@ -10,6 +12,7 @@ import selecting.platform.model.Enum.NotificationType;
 import selecting.platform.model.Notification;
 import selecting.platform.model.User;
 import selecting.platform.repository.NotificationRepository;
+import selecting.platform.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +22,8 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     // 알림 전송
     public void send(User toUser, String message, NotificationType type) {
@@ -100,5 +105,35 @@ public class NotificationService {
     public void deleteAllNotifications(Integer userId) {
         List<Notification> userNotifications = notificationRepository.findByUserUserId(userId);
         notificationRepository.deleteAll(userNotifications);
+    }
+
+
+    // 알림 저장 + 실시간 전송
+    public void notifyUser(
+            Integer userId,
+            NotificationType type,
+            String content
+    ) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Notification notification = Notification.builder()
+                .user(user)
+                .type(type)
+                .message(content)
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+
+
+        NotificationMessage message = NotificationMessage.builder()
+                .receiverId(String.valueOf(userId))
+                .message(content)
+                .type(type.name())
+                .build();
+
+        simpMessagingTemplate.convertAndSend("/sub/notifications/" + userId, message);
     }
 }
