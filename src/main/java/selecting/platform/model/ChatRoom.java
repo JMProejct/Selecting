@@ -2,7 +2,9 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import selecting.platform.model.Enum.ExitStatus;
 
 import java.sql.Timestamp;
 
@@ -30,6 +32,14 @@ public class ChatRoom {
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(ExitStatus.DEFAULT)
+    private ExitStatus userExitStatus = ExitStatus.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(ExitStatus.DEFAULT)
+    private ExitStatus postUserExitStatus;
 
     @PrePersist
     protected void prePersist() {
