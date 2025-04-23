@@ -35,7 +35,7 @@ public class ChatRoom {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault(ExitStatus.DEFAULT)
-    private ExitStatus userExitStatus = ExitStatus.ACTIVE;
+    private ExitStatus userExitStatus;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault(ExitStatus.DEFAULT)
