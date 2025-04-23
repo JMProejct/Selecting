@@ -1,30 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>로그인 | Selecting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<form action="/login" method="POST" onsubmit="loginValidate(event)">
-    <input type="text" id="usernameOrEmail" name="usernameOrEmail" placeholder="아이디 또는 이메일" required/><br/>
-    <input type="password" id="password" name="password" placeholder="비밀번호(6~12글자)" required/><br/>
-    <button type="submit">로그인</button>
-</form>
-<button onclick="onClickJoin()">회원가입</button>
+<div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h2 class="text-xl font-bold text-center mb-6 text-gray-800">👋 Selecting | 자신만의 튜터를 찾으세요</h2>
 
-<a href="/oauth2/authorization/google">
-    <button>구글 로그인</button>
-</a>
-<a href="/oauth2/authorization/kakao">
-    <button>카카오 로그인</button>
-</a>
+    <form action="/login" method="POST" onsubmit="loginValidate(event)" class="space-y-4">
+        <input type="text" id="usernameOrEmail" name="usernameOrEmail"
+               placeholder="아이디 또는 이메일"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required/>
+
+        <input type="password" id="password" name="password"
+               placeholder="비밀번호 (6~12자)"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required/>
+
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition">
+            로그인
+        </button>
+    </form>
+
+    <div class="flex justify-between items-center mt-4">
+        <span class="text-sm text-gray-600">계정이 없으신가요?</span>
+        <button onclick="onClickJoin()"
+                class="text-sm text-blue-600 hover:underline">회원가입</button>
+    </div>
+
+    <div class="mt-6 border-t pt-4 space-y-2">
+        <a href="/oauth2/authorization/google"
+           class="w-full block text-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded-md">
+            구글 로그인
+        </a>
+        <a href="/oauth2/authorization/kakao"
+           class="w-full block text-center bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold py-2 rounded-md">
+            카카오 로그인
+        </a>
+    </div>
+</div>
 
 <script src="/js/loginValidate.js"></script>
 <script>
     const onClickJoin = () => {
-        location.href = "/join"
-    }
+        location.href = "/join";
+    };
 </script>
 
 </body>

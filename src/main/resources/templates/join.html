@@ -2,17 +2,58 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>회원가입</title>
+    <title>회원가입 | Selecting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/signupValidate.js"></script>
 </head>
-<body>
-<h2>회원가입</h2>
-<form action="/join" method="post" onsubmit="joinValidate(event)">
-    <label>아이디: <input type="text" name="username" id="username" required placeholder="아이디(6~12글자)"></label><br/>
-    <label>비밀번호: <input type="password" name="password" id="password" required placeholder="비밀번호(6~12글자)"></label><br/>
-    <label>이메일: <input type="email" name="email" id="email" required placeholder="이메일"></label><br/>
-    <label>이름: <input type="text" name="name" id="name" required placeholder="이름"></label><br/>
-    <button type="submit">가입하기</button>
-    <script src="/js/joinValidate.js"></script>
-</form>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">📝 회원가입</h2>
+
+    <form action="/join" method="post" onsubmit="joinValidate(event)" class="space-y-4">
+
+        <input type="text" name="username" id="username"
+               placeholder="아이디 (6~12글자)"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required/>
+        <p id="usernameError" class="text-sm text-red-500 mt-1"></p>
+
+
+        <input type="password" name="password" id="password"
+               placeholder="비밀번호 (6~12글자)"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required/>
+        <div class="mt-2">
+            <div class="h-2 bg-gray-200 rounded">
+                <div id="passwordStrengthBar" class="h-2 rounded bg-red-400 w-0 transition-all duration-300"></div>
+            </div>
+            <p id="passwordStrengthLabel" class="text-sm text-gray-600 mt-1">🔋 비밀번호 강도: 없음</p>
+        </div>
+
+        <input type="email" name="email" id="email"
+               placeholder="이메일"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required/>
+        <p id="emailError" class="text-sm text-red-500 mt-1"></p>
+
+        <input type="text" name="name" id="name"
+               placeholder="이름"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required/>
+
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition">
+            가입하기
+        </button>
+    </form>
+
+    <div class="text-sm text-center text-gray-600 mt-4">
+        이미 계정이 있으신가요?
+        <a href="/login" class="text-blue-600 hover:underline">로그인</a>
+    </div>
+</div>
+
+<script src="/js/joinValidate.js"></script>
 </body>
 </html>

@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import selecting.platform.error.ErrorCode;
+import selecting.platform.error.exception.CustomException;
 import selecting.platform.model.User;
+import selecting.platform.repository.UserRepository;
 import selecting.platform.service.AuthService;
 
 import java.io.IOException;
@@ -16,6 +19,7 @@ import java.io.IOException;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserRepository userRepository;
 
     // 회원가입 페이지로 이동
     @GetMapping("/join")
@@ -45,5 +49,25 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         return authService.logout(response);
+    }
+
+
+    // 아이디 중복 확인
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
+        if (userRepository.existsByUsername(username)) {
+            throw new CustomException(ErrorCode.ID_ALREADY_EXISTS);
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    // 이메일 중복 확인
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+        return ResponseEntity.ok().build();
     }
 }
