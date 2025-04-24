@@ -14,6 +14,7 @@ import selecting.platform.jwt.JWTFilter;
 import selecting.platform.jwt.JWTUtil;
 import selecting.platform.oauth2.CustomSuccessHandler;
 import selecting.platform.service.CustomOAuth2UserService;
+import selecting.platform.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -22,11 +23,13 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JWTUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.jwtUtil = jwtUtil;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
@@ -46,7 +49,7 @@ public class SecurityConfig {
 
         //JWTFilter 추가
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         //oauth2
         http
