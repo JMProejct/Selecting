@@ -74,7 +74,8 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
 
     @Query("SELECT DISTINCT sp.user FROM ServicePost sp " +
             "WHERE sp.user.role = 'TUTOR' " +
-            "AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName)")
+            "AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName) " +
+            "ORDER BY sp.user.userId DESC")
     Page<User> findTutorsBySubcategory(@Param("subcategoryName") String subcategoryName, Pageable pageable);
 
     // 튜텨 ID 리스트 기반을 카테고리 Map 형태로
