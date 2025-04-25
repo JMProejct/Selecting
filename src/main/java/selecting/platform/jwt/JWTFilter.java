@@ -13,15 +13,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import selecting.platform.model.Enum.Role;
 import selecting.platform.model.User;
 import selecting.platform.security.CustomUserDetails;
+import selecting.platform.service.CustomUserDetailsService;
 
 import java.io.IOException;
 
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JWTFilter(JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
         this.jwtUtil = jwtUtil;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
@@ -86,7 +89,7 @@ public class JWTFilter extends OncePerRequestFilter {
         user.setRole(Role.valueOf(role));
 
         // Spring Security UserDetails로 래핑
-        CustomUserDetails userDetails = new CustomUserDetails(user);
+        CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
 
         // 시큐리티 인증 객체 생성 및 등록
         Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
