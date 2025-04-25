@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import selecting.platform.jwt.JWTFilter;
 import selecting.platform.jwt.JWTUtil;
 import selecting.platform.oauth2.CustomSuccessHandler;
+import selecting.platform.security.CustomAuthenticationEntryPoint;
 import selecting.platform.service.CustomOAuth2UserService;
 
 @Configuration
@@ -43,6 +44,10 @@ public class SecurityConfig {
         //HTTP Basic 인증 방식 disable
         http
                 .httpBasic((auth) -> auth.disable());
+
+        // Exception Handling
+        http
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
 
         //JWTFilter 추가
         http

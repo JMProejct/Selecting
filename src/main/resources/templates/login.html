@@ -7,8 +7,15 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
+
 <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
     <h2 class="text-xl font-bold text-center mb-6 text-gray-800">👋 Selecting | 자신만의 튜터를 찾으세요</h2>
+
+
+    <!-- Error Message -->
+    <div id="errorModal" class="hidden fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-700 px-4 py-2 rounded shadow-lg z-50 transition">
+        🚫 로그인이 필요한 서비스입니다.
+    </div>
 
     <form action="/login" method="POST" onsubmit="loginValidate(event)" class="space-y-4">
         <input type="text" id="usernameOrEmail" name="usernameOrEmail"
@@ -45,6 +52,7 @@
     </div>
 </div>
 
+<script src="/js/unauthorizedPopup.js"></script>
 <script src="/js/loginValidate.js"></script>
 <script>
     const onClickJoin = () => {
