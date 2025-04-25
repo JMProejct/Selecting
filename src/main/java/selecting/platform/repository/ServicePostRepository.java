@@ -6,8 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import selecting.platform.dto.servicepost.ServicePostResponseDto;
+import selecting.platform.dto.teacher.TeacherCardResponseDto;
+import selecting.platform.model.Enum.SubCategoryKind;
 import selecting.platform.model.ServicePost;
+import selecting.platform.model.User;
+
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface ServicePostRepository extends JpaRepository<ServicePost, Integer> {
@@ -44,5 +49,38 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
             "JOIN FETCH u.teacherProfile tp " +
             "WHERE sp.postId = :postId")
     Optional<ServicePost> findDetailById(@Param("postId") Integer postId);
+
+
+    // 교사 목록 조회 API
+    @Query("SELECT DISTINCT new selecting.platform.dto.teacher.TeacherCardResponseDto(" +
+            "u.userId, u.profileImage, u.profileImage, tp.intro, tp.careerYears) " +
+            "FROM ServicePost sp " +
+            "JOIN User u ON sp.user.userId = u.userId " +
+            "JOIN TeacherProfile tp ON tp.teacherId = u.userId " +
+            "WHERE u.role = 'TUTOR' " +
+            "AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName)")
+    List<TeacherCardResponseDto> findBasicTeacherCards(@Param("subcategoryName") String subcategoryName);
+
+
+    // 튜텨 ID -> 카테고리 목록 조회
+    @Query("SELECT DISTINCT u.userId, s.subcategoryName " +
+            "FROM ServicePost sp " +
+            "JOIN User u ON sp.user.userId = u.userId " +
+            "JOIN Subcategory s ON sp.subcategory.subcategoryId = s.subcategoryId " +
+            "WHERE u.role = 'TUTOR' " +
+            "AND (:subcategoryName IS NULL OR s.subcategoryName = :subcategoryName)")
+    List<Object[]> findTeacherCategoryMapping(@Param("subcategoryName") String subcategoryName);
+
+
+    @Query("SELECT DISTINCT sp.user FROM ServicePost sp " +
+            "WHERE sp.user.role = 'TUTOR' " +
+            "AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName)")
+    Page<User> findTutorsBySubcategory(@Param("subcategoryName") String subcategoryName, Pageable pageable);
+
+    // 튜텨 ID 리스트 기반을 카테고리 Map 형태로
+    @Query("SELECT sp.user.userId, sp.subcategory.subcategoryName " +
+            "FROM ServicePost sp " +
+            "WHERE sp.user.userId IN :userIds")
+    List<Object[]> findCategoriesGroupedByTutorIds(@Param("userIds") List<Integer> userIds);
 
 }

@@ -1,17 +1,28 @@
 package selecting.platform.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import selecting.platform.dto.servicepost.ServicePostDetailDto;
 import selecting.platform.dto.servicepost.ServicePostResponseDto;
+import selecting.platform.dto.teacher.TeacherCardResponseDto;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
 import selecting.platform.model.Enum.Role;
 import selecting.platform.model.ServicePost;
+import selecting.platform.model.User;
 import selecting.platform.repository.ServicePostRepository;
+import selecting.platform.repository.SubCategoryRepository;
+import selecting.platform.repository.UserRepository;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -19,12 +30,16 @@ import java.math.BigDecimal;
 public class ServicePostService {
 
     private final ServicePostRepository servicePostRepository;
+    private final SubCategoryRepository subCategoryRepository;
+    private final UserRepository userRepository;
 
+    // 포스트 검색
     public Page<ServicePostResponseDto> searchPosts(String keyword, BigDecimal minPrice, BigDecimal maxPrice, String location, Integer minCareer, String education, Pageable pageable) {
         return servicePostRepository.searchWithFilters(keyword, minPrice, maxPrice, location, minCareer, education, pageable);
     }
 
 
+    // 포스트 상세보기 조회
     public ServicePostDetailDto getPostDetail(Integer postId) {
         ServicePost post = servicePostRepository.findDetailById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -49,6 +64,51 @@ public class ServicePostService {
                 .certifications(post.getUser().getTeacherProfile().getCertifications())
                 .intro(post.getUser().getTeacherProfile().getIntro())
                 .build();
+    }
+    
+    
+    // 선생 카드 조회
+    @Transactional
+    public Page<TeacherCardResponseDto> getTeacherCards(String subcategoryName, Pageable pageable) {
+
+        // 1. 튜터 검색
+        Page<User> tutors;
+        if (subcategoryName == null || subcategoryName.isBlank()) {
+            String randomSubcategory = subCategoryRepository.getRandomSubCategoryName();
+            tutors = servicePostRepository.findTutorsBySubcategory(randomSubcategory, pageable);
+        } else {
+            tutors = servicePostRepository.findTutorsBySubcategory(subcategoryName, pageable);
+        }
+
+        List<Integer> tutorIds = tutors.getContent().stream()
+                .map(User::getUserId)
+                .toList();
+
+        // 2. 튜터별 카테고리 매핑
+        Map<Integer, List<String>> categoryMap = new HashMap<>();
+        List<Object[]> rawCategoryList = servicePostRepository.findCategoriesGroupedByTutorIds(tutorIds);
+        for (Object[] row : rawCategoryList) {
+            Integer userId = (Integer) row[0];
+            String subCategoryName = (String) row[1];
+            categoryMap.computeIfAbsent(userId, k -> new ArrayList<>()).add(subCategoryName);
+        }
+
+        // 3. DTO 조립
+        List<TeacherCardResponseDto> results = tutors.getContent().stream()
+                .map(user -> TeacherCardResponseDto.builder()
+                        .teacherId(user.getUserId())
+                        .name(user.getName())
+                        .profileImage(user.getProfileImage())
+                        .categories(categoryMap.getOrDefault(user.getUserId(), List.of()))
+                        .intro(user.getTeacherProfile().getIntro())
+                        .careerYears(user.getTeacherProfile().getCareerYears())
+                        .rating(0.0) // 추후 연동
+                        .reviewCount(0) // 추후 연동
+                        .build())
+                .toList();
+
+        // 4. 페이징 반환
+        return new PageImpl<>(results, pageable, tutors.getTotalElements());
     }
 
 }
