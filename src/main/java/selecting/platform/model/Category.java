@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import selecting.platform.model.Enum.SubCategoryKind;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,4 +23,8 @@ public class Category {
     @Enumerated(EnumType.STRING)
     @Column(name = "category_kind", length = 20)
     private SubCategoryKind categoryKind;
+
+
+    @ManyToMany(mappedBy = "categories")
+    private Set<TeacherProfile> teachers = new HashSet<>();
 }

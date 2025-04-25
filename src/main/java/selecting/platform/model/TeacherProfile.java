@@ -3,6 +3,9 @@ package selecting.platform.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "teacher_profile")
 @Getter
@@ -32,4 +35,12 @@ public class TeacherProfile {
 
     @Column(columnDefinition = "TEXT")
     private String intro;
+
+    @ManyToMany
+    @JoinTable(
+            name = "teacher_category",
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
 }
