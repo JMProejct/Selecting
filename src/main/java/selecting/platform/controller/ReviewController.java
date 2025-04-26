@@ -11,25 +11,28 @@ import selecting.platform.security.CustomUserDetails;
 import selecting.platform.service.ReviewService;
 
 @RestController
-@RequestMapping("/api/review/")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/my")
+    // 사용자 기준 리뷰 조회
+    @GetMapping("/review/my")
     public ResponseEntity<ReviewListResponseDto> getMyReviews(
             @AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(reviewService.getMyReviews(user.getUserId()));
     }
 
-    @GetMapping("/{postId}")
+    // 특정 게시글 기준 리뷰 조회
+    @GetMapping("/post/{postId}/review")
     public ResponseEntity<ReviewListResponseDto> getPostReviews(
             @PathVariable Integer postId) {
         return ResponseEntity.ok(reviewService.getPostReviews(postId));
     }
 
-    @PostMapping("/{postId}/create")
+    // 특정 게시글 기준 리뷰 작성
+    @PostMapping("/post/{postId}/review")
     public ResponseEntity<ReviewResponseDto> createReview(
             @PathVariable Integer postId,
             @AuthenticationPrincipal CustomUserDetails user,
@@ -37,11 +40,20 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.createReview(postId, user.getUserId(),dto));
     }
 
-    @PatchMapping("/{reviewId}")
+    // 특정 리뷰 수정
+    @PatchMapping("/review/{reviewId}")
     public ResponseEntity<ReviewResponseDto> patchReview(
             @PathVariable Integer reviewId,
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ReviewWriteRequestDto dto) {
         return ResponseEntity.ok(reviewService.updateReview(reviewId, user.getUserId(),dto));
+    }
+
+    // 특정 리뷰 삭제
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable Integer reviewId) {
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
     }
 }

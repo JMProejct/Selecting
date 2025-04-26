@@ -58,10 +58,8 @@ public class ReviewService {
             throw new CustomException(ErrorCode.AUTH_FORBIDDEN);
         }
 
-        review = Review.builder()
-                .rating(dto.getRating())
-                .comment(dto.getComment())
-                .build();
+        review.setRating(dto.getRating());
+        review.setComment(dto.getComment());
 
         reviewRepository.save(review);
 
@@ -86,5 +84,9 @@ public class ReviewService {
         reviewRepository.save(review);
 
         return ReviewResponseDto.from(review);
+    }
+
+    public void deleteReview(Integer reviewId) {
+        reviewRepository.deleteById(reviewId);
     }
 }
