@@ -24,7 +24,4 @@ public class Category {
     @Column(name = "category_kind", length = 20)
     private SubCategoryKind categoryKind;
 
-
-    @ManyToMany(mappedBy = "categories")
-    private Set<TeacherProfile> teachers = new HashSet<>();
 }

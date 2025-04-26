@@ -19,10 +19,7 @@ import selecting.platform.repository.SubCategoryRepository;
 import selecting.platform.repository.UserRepository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -72,19 +69,24 @@ public class ServicePostService {
     public Page<TeacherCardResponseDto> getTeacherCards(String subcategoryName, Pageable pageable) {
 
         // 1. 튜터 검색
-        Page<User> tutors;
+        Page<Integer> tutorIdPage;
         if (subcategoryName == null || subcategoryName.isBlank()) {
             String randomSubcategory = subCategoryRepository.getRandomSubCategoryName();
-            tutors = servicePostRepository.findTutorsBySubcategory(randomSubcategory, pageable);
+            tutorIdPage = servicePostRepository.findTutorIdsBySubcategory(randomSubcategory, pageable);
         } else {
-            tutors = servicePostRepository.findTutorsBySubcategory(subcategoryName, pageable);
+            tutorIdPage = servicePostRepository.findTutorIdsBySubcategory(subcategoryName, pageable);
         }
 
-        List<Integer> tutorIds = tutors.getContent().stream()
-                .map(User::getUserId)
-                .toList();
+        List<Integer> tutorIds = tutorIdPage.getContent();
 
-        // 2. 튜터별 카테고리 매핑
+        if (tutorIds.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+
+        // 2. 튜터 정보 조회
+        List<User> tutors = userRepository.findAllById(tutorIds);
+
+        // 3. 튜터별 카테고리 매핑
         Map<Integer, List<String>> categoryMap = new HashMap<>();
         List<Object[]> rawCategoryList = servicePostRepository.findCategoriesGroupedByTutorIds(tutorIds);
         for (Object[] row : rawCategoryList) {
@@ -93,22 +95,22 @@ public class ServicePostService {
             categoryMap.computeIfAbsent(userId, k -> new ArrayList<>()).add(subCategoryName);
         }
 
-        // 3. DTO 조립
-        List<TeacherCardResponseDto> results = tutors.getContent().stream()
+        // 4. DTO 조립
+        List<TeacherCardResponseDto> results = tutors.stream()
                 .map(user -> TeacherCardResponseDto.builder()
                         .teacherId(user.getUserId())
                         .name(user.getName())
                         .profileImage(user.getProfileImage())
                         .categories(categoryMap.getOrDefault(user.getUserId(), List.of()))
-                        .intro(user.getTeacherProfile().getIntro())
-                        .careerYears(user.getTeacherProfile().getCareerYears())
-                        .rating(0.0) // 추후 연동
-                        .reviewCount(0) // 추후 연동
+                        .intro(user.getTeacherProfile() != null ? user.getTeacherProfile().getIntro() : "")
+                        .careerYears(user.getTeacherProfile() != null ? user.getTeacherProfile().getCareerYears() : 0)
+                        .rating(0.0)  // 추후 구현
+                        .reviewCount(0)  // 추후 구현
                         .build())
                 .toList();
 
-        // 4. 페이징 반환
-        return new PageImpl<>(results, pageable, tutors.getTotalElements());
+        // 5. 페이징 반환
+        return new PageImpl<>(results, pageable, tutorIdPage.getTotalElements());
     }
 
 }

@@ -3,6 +3,9 @@ package selecting.platform.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "subcategory")
 @Getter
@@ -22,5 +25,9 @@ public class Subcategory {
 
     @Column(name = "subcategory_name")
     private String subcategoryName;
+
+    @ManyToMany(mappedBy = "subcategories")
+    private Set<TeacherProfile> teachers = new HashSet<>();
+
 
 }

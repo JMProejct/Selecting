@@ -20,7 +20,7 @@ public class TeacherProfile {
     private Integer teacherId;
 
     @OneToOne
-    @MapsId     // teacher_id를 user_id로 사용
+    @MapsId
     @JoinColumn(name = "teacher_id")
     private User user;
 
@@ -38,9 +38,9 @@ public class TeacherProfile {
 
     @ManyToMany
     @JoinTable(
-            name = "teacher_category",
+            name = "teacher_subcategory",
             joinColumns = @JoinColumn(name = "teacher_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
+            inverseJoinColumns = @JoinColumn(name = "subcategory_id")
     )
-    private Set<Category> categories = new HashSet<>();
+    private Set<Subcategory> subcategories = new HashSet<>();
 }

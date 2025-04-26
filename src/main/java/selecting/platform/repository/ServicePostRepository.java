@@ -51,32 +51,18 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
     Optional<ServicePost> findDetailById(@Param("postId") Integer postId);
 
 
-    // 교사 목록 조회 API
-    @Query("SELECT DISTINCT new selecting.platform.dto.teacher.TeacherCardResponseDto(" +
-            "u.userId, u.profileImage, u.profileImage, tp.intro, tp.careerYears) " +
-            "FROM ServicePost sp " +
-            "JOIN User u ON sp.user.userId = u.userId " +
-            "JOIN TeacherProfile tp ON tp.teacherId = u.userId " +
-            "WHERE u.role = 'TUTOR' " +
-            "AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName)")
-    List<TeacherCardResponseDto> findBasicTeacherCards(@Param("subcategoryName") String subcategoryName);
 
 
-    // 튜텨 ID -> 카테고리 목록 조회
-    @Query("SELECT DISTINCT u.userId, s.subcategoryName " +
-            "FROM ServicePost sp " +
-            "JOIN User u ON sp.user.userId = u.userId " +
-            "JOIN Subcategory s ON sp.subcategory.subcategoryId = s.subcategoryId " +
-            "WHERE u.role = 'TUTOR' " +
-            "AND (:subcategoryName IS NULL OR s.subcategoryName = :subcategoryName)")
-    List<Object[]> findTeacherCategoryMapping(@Param("subcategoryName") String subcategoryName);
+    @Query("""
+    SELECT DISTINCT sp.user.userId FROM ServicePost sp
+    WHERE sp.user.role = 'TUTOR'
+    AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName)
+""")
+    Page<Integer> findTutorIdsBySubcategory(@Param("subcategoryName") String subcategoryName, Pageable pageable);
 
 
-    @Query("SELECT DISTINCT sp.user FROM ServicePost sp " +
-            "WHERE sp.user.role = 'TUTOR' " +
-            "AND (:subcategoryName IS NULL OR sp.subcategory.subcategoryName = :subcategoryName) " +
-            "ORDER BY sp.user.userId DESC")
-    Page<User> findTutorsBySubcategory(@Param("subcategoryName") String subcategoryName, Pageable pageable);
+
+
 
     // 튜텨 ID 리스트 기반을 카테고리 Map 형태로
     @Query("SELECT sp.user.userId, sp.subcategory.subcategoryName " +

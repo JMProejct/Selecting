@@ -3,7 +3,6 @@ package selecting.platform.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,7 @@ public class TeacherController {
     @GetMapping
     public ResponseEntity<Page<TeacherCardResponseDto>> getTeachersBySubCategory(
             @RequestParam(required = false) String subCategoryName,
-            @PageableDefault(size = 10, sort = "userId", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         Page<TeacherCardResponseDto> result = servicePostService.getTeacherCards(subCategoryName, pageable);
         return ResponseEntity.ok(result);
