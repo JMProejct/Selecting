@@ -48,7 +48,7 @@ function loadTeachers(subCategoryName = null, keyword = null) {
 
             data.content.forEach(teacher => {
                 const card = `
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <div class="max-w-[280px] w-full bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition aspect-[3/4]">
                         <img src="${teacher.profileImage}" alt="${teacher.name}" class="w-full h-40 object-cover">
                         <div class="p-4">
                             <h3 class="text-lg font-bold text-gray-800 mb-1">${teacher.name} 선생님</h3>
