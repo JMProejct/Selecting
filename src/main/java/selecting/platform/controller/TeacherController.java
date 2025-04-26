@@ -23,7 +23,7 @@ public class TeacherController {
     @GetMapping
     public ResponseEntity<Page<TeacherCardResponseDto>> getTeachersBySubCategory(
             @RequestParam(required = false) String subCategoryName,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 12) Pageable pageable
     ) {
         Page<TeacherCardResponseDto> result = servicePostService.getTeacherCards(subCategoryName, pageable);
         return ResponseEntity.ok(result);
