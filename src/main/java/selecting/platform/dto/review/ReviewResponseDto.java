@@ -2,13 +2,11 @@ package selecting.platform.dto.review;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import selecting.platform.model.Review;
 
 import java.sql.Timestamp;
 
 @Getter
-@Setter
 @Builder
 public class ReviewResponseDto {
     private Integer reviewId;
