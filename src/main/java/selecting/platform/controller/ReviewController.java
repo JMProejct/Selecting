@@ -27,14 +27,14 @@ public class ReviewController {
     // 특정 게시글 기준 리뷰 조회
     @GetMapping("/post/{postId}/review")
     public ResponseEntity<ReviewListResponseDto> getPostReviews(
-            @PathVariable Integer postId) {
+            @PathVariable("postId") Integer postId) {
         return ResponseEntity.ok(reviewService.getPostReviews(postId));
     }
 
     // 특정 게시글 기준 리뷰 작성
     @PostMapping("/post/{postId}/review")
     public ResponseEntity<ReviewResponseDto> createReview(
-            @PathVariable Integer postId,
+            @PathVariable("postId") Integer postId,
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ReviewWriteRequestDto dto){
         return ResponseEntity.ok(reviewService.createReview(postId, user.getUserId(),dto));
@@ -43,7 +43,7 @@ public class ReviewController {
     // 특정 리뷰 수정
     @PatchMapping("/review/{reviewId}")
     public ResponseEntity<ReviewResponseDto> patchReview(
-            @PathVariable Integer reviewId,
+            @PathVariable("reviewId") Integer reviewId,
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ReviewWriteRequestDto dto) {
         return ResponseEntity.ok(reviewService.updateReview(reviewId, user.getUserId(),dto));
@@ -52,7 +52,7 @@ public class ReviewController {
     // 특정 리뷰 삭제
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<Void> deleteReview(
-            @PathVariable Integer reviewId) {
+            @PathVariable("reviewId") Integer reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
     }
