@@ -2,8 +2,6 @@ package selecting.platform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import selecting.platform.model.Enum.MessageStatus;
 
 import java.sql.Timestamp;
 
@@ -34,8 +32,6 @@ public class ChatMessage {
     @Column
     private Timestamp sentAt;
 
-    @Column(nullable = false)
-    @ColumnDefault(MessageStatus.DEFAULT)
-    @Enumerated(EnumType.STRING)
-    private MessageStatus messageRead;
+    @Column
+    private boolean messageRead;
 }

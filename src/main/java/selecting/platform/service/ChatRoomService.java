@@ -8,7 +8,6 @@ import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
 import selecting.platform.model.ChatMessage;
 import selecting.platform.model.ChatRoom;
-import selecting.platform.model.Enum.ExitStatus;
 import selecting.platform.model.ServicePost;
 import selecting.platform.model.User;
 import selecting.platform.repository.ChatMessageRepository;
@@ -55,8 +54,8 @@ public class ChatRoomService {
                 .filter(chatRoom -> {
                     boolean isPostOwner = chatRoom.getPost().getUser().getUserId().equals(userId);
                     return isPostOwner
-                            ? chatRoom.getPostUserExitStatus() == ExitStatus.ACTIVE
-                            : chatRoom.getUserExitStatus() == ExitStatus.ACTIVE;
+                            ? chatRoom.isPostUserExitStatus()
+                            : chatRoom.isUserExitStatus();
                 })
                 .map(chatRoom -> {
             // 상대방 가져오기
@@ -89,9 +88,9 @@ public class ChatRoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUNT));
 
         if (chatRoom.getPost().getUser().getUserId().equals(userId)) {
-            chatRoom.setPostUserExitStatus(ExitStatus.EXITED);
+            chatRoom.setPostUserExitStatus(false);
         } else if (chatRoom.getUser().getUserId().equals(userId)) {
-            chatRoom.setUserExitStatus(ExitStatus.EXITED);
+            chatRoom.setUserExitStatus(false);
         } else {
             throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }

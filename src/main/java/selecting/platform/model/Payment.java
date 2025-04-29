@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import selecting.platform.model.Enum.PaymentMethod;
 import selecting.platform.model.Enum.Status;
 
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ public class Payment {
 
     private Integer paymentMethod; // TINYINT로 매핑
 
-    private String status;
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "reservation_id", nullable = false)
