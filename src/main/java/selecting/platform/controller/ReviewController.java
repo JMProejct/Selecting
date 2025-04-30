@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import selecting.platform.dto.review.ReviewListResponseDto;
+import selecting.platform.dto.review.ReviewPageResponseDto;
 import selecting.platform.dto.review.ReviewResponseDto;
 import selecting.platform.dto.review.ReviewWriteRequestDto;
 import selecting.platform.security.CustomUserDetails;
@@ -19,16 +19,18 @@ public class ReviewController {
 
     // 사용자 기준 리뷰 조회
     @GetMapping("/review/my")
-    public ResponseEntity<ReviewListResponseDto> getMyReviews(
+    public ResponseEntity<ReviewPageResponseDto> getMyReviews(
             @AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(reviewService.getMyReviews(user.getUserId()));
     }
 
     // 특정 게시글 기준 리뷰 조회
     @GetMapping("/post/{postId}/review")
-    public ResponseEntity<ReviewListResponseDto> getPostReviews(
-            @PathVariable("postId") Integer postId) {
-        return ResponseEntity.ok(reviewService.getPostReviews(postId));
+    public ResponseEntity<ReviewPageResponseDto> getPostReviews(
+            @PathVariable("postId") Integer postId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "latest") String sort) {
+        return ResponseEntity.ok(reviewService.getPostReviews(postId, page, sort));
     }
 
     // 특정 게시글 기준 리뷰 작성

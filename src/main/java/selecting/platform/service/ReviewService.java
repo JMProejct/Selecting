@@ -1,8 +1,12 @@
 package selecting.platform.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import selecting.platform.dto.review.ReviewListResponseDto;
+import selecting.platform.dto.review.ReviewPageResponseDto;
 import selecting.platform.dto.review.ReviewResponseDto;
 import selecting.platform.dto.review.ReviewWriteRequestDto;
 import selecting.platform.error.ErrorCode;
@@ -24,29 +28,35 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ServicePostRepository servicePostRepository;
 
-    public ReviewListResponseDto getMyReviews(Integer userId) {
+    public ReviewPageResponseDto getMyReviews(Integer userId) {
         List<Review> reviews = reviewRepository.findByUserUserId(userId);
 
         List<ReviewResponseDto> responseDto = reviews.stream()
                 .map(ReviewResponseDto::from)
                 .toList();
 
-        return ReviewListResponseDto.builder()
+        return ReviewPageResponseDto.builder()
                 .reviews(responseDto)
                 .reviewCount(responseDto.size())
                 .build();
     }
 
-    public ReviewListResponseDto getPostReviews(Integer postId) {
-        List<Review> reviews = reviewRepository.findByPostPostId(postId);
+    public ReviewPageResponseDto getPostReviews(Integer postId, int page, String sort) {
+        Sort sorting = switch (sort) {
+            case "ratingHigh" -> Sort.by(Sort.Direction.DESC, "rating");
+            case "ratingLow" -> Sort.by(Sort.Direction.ASC, "rating");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
 
-        List<ReviewResponseDto> responseDto = reviews.stream()
-                .map(ReviewResponseDto::from)
-                .toList();
+        Pageable pageable = PageRequest.of(page, 5, sorting);
+        Page<Review> reviews = reviewRepository.findByPostPostId(postId, pageable);
 
-        return ReviewListResponseDto.builder()
-                .reviews(responseDto)
-                .reviewCount(responseDto.size())
+        Page<ReviewResponseDto> responseDto = reviews.map(ReviewResponseDto::from);
+
+        return ReviewPageResponseDto.builder()
+                .reviews(responseDto.getContent())
+                .reviewCount(responseDto.getNumberOfElements())
+                .hasNext(responseDto.hasNext())
                 .build();
     }
 

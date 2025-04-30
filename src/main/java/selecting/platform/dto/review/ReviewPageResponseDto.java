@@ -7,7 +7,8 @@ import java.util.List;
 
 @Getter
 @Builder
-public class ReviewListResponseDto {
+public class ReviewPageResponseDto {
     private int reviewCount;
+    private boolean hasNext;
     private List<ReviewResponseDto> reviews;
 }
