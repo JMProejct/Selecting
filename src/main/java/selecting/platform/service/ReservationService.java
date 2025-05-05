@@ -200,7 +200,7 @@ public class ReservationService {
         Payment payment = paymentRepository.findByReservation(reservation)
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 
-        payment.setStatus("REFUNDED");
+        payment.setStatus(Status.REFUNDED);
         paymentRepository.save(payment);
 
 
