@@ -2,6 +2,7 @@ package selecting.platform.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,8 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<?> registerUser(User user) {
+    @Transactional
+    public void registerUser(User user) {
         if (userService.existsByUsername(user.getUsername())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
@@ -76,7 +78,6 @@ public class AuthService {
                 .build();
 
         userService.save(newUser);
-        return ResponseEntity.ok("회원가입 성공: " + user.getUsername());
     }
 
     public ResponseEntity<?> logout(HttpServletResponse response) {

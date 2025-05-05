@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import selecting.platform.error.ErrorCode;
 import selecting.platform.error.exception.CustomException;
@@ -42,8 +43,14 @@ public class AuthController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(@ModelAttribute User user) {
-        return authService.registerUser(user);
+    public String join(@ModelAttribute User user, Model model) {
+        try{
+            authService.registerUser(user);
+            return "redirect:/login";
+        } catch (CustomException e) {
+            model.addAttribute("error", e.getErrorCode());
+            return "join";
+        }
     }
 
     @PostMapping("/logout")
