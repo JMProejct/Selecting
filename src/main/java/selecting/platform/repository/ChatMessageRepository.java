@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     Optional<ChatMessage> findTopByRoomOrderBySentAtDesc(ChatRoom chatRoom);
 
-    @Query("SELECT COUNT(m) FROM ChatMessage m WHERE m.room = :room AND m.sender.userId <> :userId AND m.messageRead = 'Unread'")
+    @Query("SELECT COUNT(m) FROM ChatMessage m WHERE m.room = :room AND m.sender.userId <> :userId AND m.messageRead = false")
     int countUnreadMessagesByRoomAndNotSender(@Param("room") ChatRoom room, @Param("userId") Integer userId);
 }
