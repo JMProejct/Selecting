@@ -2,13 +2,15 @@ package selecting.platform.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import selecting.platform.dto.user.UserProfileResponseDto;
+import selecting.platform.security.CustomUserDetails;
 import selecting.platform.service.UserService;
-import selecting.platform.util.AuthUtil;
+
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -17,16 +19,23 @@ import selecting.platform.util.AuthUtil;
 public class UserController {
 
     private final UserService userService;
-    private final AuthUtil authUtil;
 
     @GetMapping("/profile")
-    public String profile(@CookieValue(name = "Authorization", required = false) String token, Model model) {
+    public String profile(@AuthenticationPrincipal CustomUserDetails user, Model model) {
         try {
-            model.addAttribute("user", authUtil.getUserFromToken(token));
+            model.addAttribute("user", UserProfileResponseDto.from(user.getUser()));
             return "user/profile";
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error";
         }
+    }
+
+    @PatchMapping("/profile/image")
+    public String updateProfileImage(@AuthenticationPrincipal CustomUserDetails user,
+                                     @RequestBody Map<String, String> requestBody) {
+        String profileImage = requestBody.get("profileImage");
+        userService.updateProfileImage(user, profileImage);
+        return "redirect:/user/profile";
     }
 }

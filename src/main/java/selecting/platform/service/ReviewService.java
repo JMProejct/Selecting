@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import selecting.platform.dto.review.ReviewPageResponseDto;
 import selecting.platform.dto.review.ReviewResponseDto;
@@ -98,5 +99,15 @@ public class ReviewService {
 
     public void deleteReview(Integer reviewId) {
         reviewRepository.deleteById(reviewId);
+    }
+
+    @Async
+    public void updateProfileImageReviews(Integer userId, String profileImage) {
+        List<Review> reviews = reviewRepository.findByUserUserId(userId);
+
+        for (Review review : reviews) {
+            review.getUser().setProfileImage(profileImage);
+        }
+        reviewRepository.saveAll(reviews);
     }
 }
