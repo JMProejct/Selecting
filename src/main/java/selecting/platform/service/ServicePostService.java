@@ -35,6 +35,10 @@ public class ServicePostService {
         return servicePostRepository.searchWithFilters(keyword, minPrice, maxPrice, location, minCareer, education, pageable);
     }
 
+    public Page<ServicePostResponseDto> getAllPosts(Pageable pageable) {
+        return servicePostRepository.findAllPosts(pageable);
+    }
+
 
     // 포스트 상세보기 조회
     public ServicePostDetailDto getPostDetail(Integer postId) {
@@ -61,6 +65,45 @@ public class ServicePostService {
                 .certifications(post.getUser().getTeacherProfile().getCertifications())
                 .intro(post.getUser().getTeacherProfile().getIntro())
                 .build();
+    }
+
+    /**
+     * 게시글
+     */
+
+    // 게시글 등록
+    public Integer createPost(ServicePost post) {
+        return servicePostRepository.save(post).getPostId();
+    }
+
+    // 게시글 수정
+    public void updatePost(Integer postId, ServicePost updated, User requester) {
+        ServicePost post = servicePostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getUser().getUserId().equals(requester.getUserId()) && !requester.isAdmin()) {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        post.setTitle(updated.getTitle());
+        post.setLocation(updated.getLocation());
+        post.setPrice(updated.getPrice());
+        post.setSubcategory(updated.getSubcategory());
+        post.setDescription(updated.getDescription());
+
+        servicePostRepository.save(post);
+    }
+
+    // 게시글 삭제
+    public void deletePost(Integer postId, User requester) {
+        ServicePost post = servicePostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getUser().getUserId().equals(requester.getUserId()) && !requester.isAdmin()) {
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        servicePostRepository.delete(post);
     }
     
     

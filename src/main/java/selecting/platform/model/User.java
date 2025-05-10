@@ -59,4 +59,9 @@ public class User {
             createdAt = new Timestamp(System.currentTimeMillis());
         }
     }
+
+    public boolean isAdmin() {
+        return this.role.equals(Role.ADMIN);
+    }
+
 }

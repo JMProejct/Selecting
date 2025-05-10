@@ -6,12 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import selecting.platform.dto.servicepost.ServicePostDetailDto;
 import selecting.platform.dto.servicepost.ServicePostResponseDto;
+import selecting.platform.model.ServicePost;
+import selecting.platform.model.User;
 import selecting.platform.service.ServicePostService;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -37,4 +41,33 @@ public class ServicePostController {
     public ResponseEntity<ServicePostDetailDto> getPostDetail(@PathVariable Integer postId) {
         return ResponseEntity.ok(servicePostService.getPostDetail(postId));
     }
+
+
+    // 게시글 목록 API
+    @GetMapping("/all")
+    public ResponseEntity<Page<ServicePostResponseDto>> getAllPosts(@PageableDefault(size = 50, sort = "postId", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ServicePostResponseDto> posts = servicePostService.getAllPosts(pageable);
+        return ResponseEntity.ok(posts);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createPost(@RequestBody ServicePost post, @AuthenticationPrincipal User user) {
+        post.setUser(user);
+        Integer postId = servicePostService.createPost(post);
+        return ResponseEntity.ok(postId);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<?> updatePost(@PathVariable Integer postId, @RequestBody ServicePost updated, @AuthenticationPrincipal User user) {
+        servicePostService.updatePost(postId, updated, user);
+        return ResponseEntity.ok("수정 완료");
+    }
+    
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Integer postId, @AuthenticationPrincipal User user) {
+        servicePostService.deletePost(postId, user);
+        return ResponseEntity.ok("삭제 완료");
+    }
+
+
 }

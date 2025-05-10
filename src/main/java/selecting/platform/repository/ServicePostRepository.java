@@ -70,4 +70,21 @@ public interface ServicePostRepository extends JpaRepository<ServicePost, Intege
             "WHERE sp.user.userId IN :userIds")
     List<Object[]> findCategoriesGroupedByTutorIds(@Param("userIds") List<Integer> userIds);
 
+
+
+    // 게시글 목록 조회
+    @Query("SELECT new selecting.platform.dto.servicepost.ServicePostResponseDto(" +
+            "sp.postId, sp.title, sp.location, sp.subcategory.subcategoryName, " +
+            "u.name, sp.price, tp.careerYears, tp.education) " +
+            "FROM ServicePost sp " +
+            "JOIN sp.user u " +
+            "JOIN TeacherProfile tp ON tp.user.userId = u.userId " +
+            "WHERE u.role = 'TUTOR'")
+    Page<ServicePostResponseDto> findAllPosts(Pageable pageable);
+
+
+    Optional<ServicePost> findByPostIdAndUser_UserId(Integer postId, Integer userId);
+
+
+
 }
