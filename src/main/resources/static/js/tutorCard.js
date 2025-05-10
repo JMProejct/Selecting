@@ -31,7 +31,7 @@ function loadTeachers(subCategoryName = null, keyword = null) {
         .then(response => response.json())
         .then(data => {
             const teacherCards = document.getElementById('teacherCards');
-            const recommendTitle = document.getElementById('recommendTitle');
+            const recommendTitle = document.getElementById('recommendTitle2');
 
             teacherCards.innerHTML = ''; // 초기화
 
